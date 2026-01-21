@@ -18,7 +18,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { background-color: #f0f4f8; height: 100vh; display: flex; overflow: hidden; }
 
-        /* SIDEBAR */
         .sidebar { 
             position: fixed; top: 0; left: -340px; width: 340px; height: 100%; 
             background: var(--marinho); transition: 0.4s; z-index: 1000; 
@@ -37,18 +36,15 @@
         .btn-ver { background: var(--azul-medio); color: white; }
         .btn-edt { background: #555; color: white; }
 
-        /* HEADER */
         .main-content { flex: 1; display: flex; flex-direction: column; width: 100%; }
         header { background: var(--marinho); color: white; padding: 15px 25px; display: flex; align-items: center; justify-content: space-between; }
         
         main { flex: 1; overflow-y: auto; padding: 20px; }
         .container { max-width: 700px; margin: 0 auto; }
 
-        /* CARDS */
         .card { background: var(--branco); border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 25px; border-left: 6px solid var(--marinho); position: relative; }
         h2 { font-size: 13px; color: var(--marinho); margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
 
-        /* ETIQUETAS DE ERRO */
         .input-group { margin-bottom: 20px; position: relative; }
         label { display: block; font-size: 10px; font-weight: bold; color: #555; margin-bottom: 5px; text-transform: uppercase; }
         input[type="text"] { width: 100%; padding: 12px; border: 2px solid var(--cinza); border-radius: 6px; outline: none; font-size: 14px; }
@@ -63,7 +59,6 @@
         .row { display: flex; gap: 10px; }
         .row > div { flex: 1; }
 
-        /* SELETORES */
         .check-container { margin-bottom: 15px; padding: 8px; border-radius: 8px; border: 2px solid transparent; }
         .check-row { display: flex; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
         .btn-check { flex: 1; min-width: 80px; background: #f8f9fa; border: 1px solid #ddd; padding: 10px; border-radius: 6px; cursor: pointer; text-align: center; font-size: 10px; font-weight: bold; }
@@ -77,9 +72,22 @@
 
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; z-index: 999; }
         .overlay.active { display: block; }
+        
+        /* NOVO STATUS DE ENVIO */
+        #loading-overlay { 
+            position: fixed; inset: 0; background: rgba(10, 25, 47, 0.9); 
+            display: none; flex-direction: column; align-items: center; justify-content: center; 
+            z-index: 2000; color: var(--azul-claro); text-align: center; padding: 20px;
+        }
     </style>
 </head>
 <body>
+
+    <div id="loading-overlay">
+        <div style="font-size: 40px; margin-bottom: 20px;">📡</div>
+        <h3 id="status-texto">SINCRONIZANDO COM O CODEX...</h3>
+        <p style="font-size: 12px; margin-top: 10px; color: white;">Aguarde, o servidor está acordando para receber sua ficha.</p>
+    </div>
 
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
@@ -177,7 +185,7 @@
                         </div>
                     </div>
                     <div class="input-group"><label>Modelo e Cor do Veículo</label><input type="text" id="v-det"></div>
-                    <button class="btn-registrar" onclick="enviarFinal()">Finalizar Ficha ARP</button>
+                    <button class="btn-registrar" id="btn-final" onclick="enviarFinal()">Finalizar Ficha ARP</button>
                 </div>
 
             </div>
@@ -241,28 +249,50 @@
             showParabens();
         }
 
-        // FUNÇÃO DE ENVIO REAL PARA O CODEX-DARC
+        // NOVA FUNÇÃO DE ENVIO COM "INSISTÊNCIA" (LOOP)
         async function enviarFinal() {
-            // Primeiro valida e salva a última seção
             salvarCard('card-mob', 'mob');
 
-            const nomeAgente = document.getElementById('nome').value || "Agente Desconhecido";
+            const loading = document.getElementById('loading-overlay');
+            const statusTexto = document.getElementById('status-texto');
+            loading.style.display = 'flex';
             
-            try {
-                const response = await fetch("https://codex-darc.onrender.com/registrar", {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        nome: nomeAgente,
-                        conteudo: db // Envia o banco de dados completo com todas as seções
-                    })
-                });
+            const nomeAgente = document.getElementById('nome').value || "Agente Desconhecido";
+            let sucesso = false;
+            let tentativas = 0;
 
-                if (response.ok) {
-                    alert("✅ FICHA ARP SINCRONIZADA COM O CODEX CENTRAL!");
+            while (!sucesso) {
+                tentativas++;
+                statusTexto.innerText = `CONECTANDO AO CODEX (Tentativa ${tentativas})...`;
+                
+                try {
+                    const response = await fetch("https://codex-darc.onrender.com/registrar", {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            nome: nomeAgente,
+                            conteudo: db
+                        })
+                    });
+
+                    if (response.ok) {
+                        sucesso = true;
+                        loading.style.display = 'none';
+                        alert("✅ SUCESSO! DADOS ENVIADOS AO CODEX CENTRAL.");
+                        location.reload(); // Limpa a ficha após enviar
+                    }
+                } catch (err) {
+                    console.log("Servidor dormindo, tentando novamente em 5 segundos...");
+                    // Espera 5 segundos antes de tentar de novo
+                    await new Promise(resolve => setTimeout(resolve, 5000));
                 }
-            } catch (err) {
-                alert("⚠️ Erro de conexão. O servidor pode estar acordando. Tente enviar novamente em 20 segundos.");
+                
+                // Limite de segurança para não ficar em loop infinito se o link estiver errado
+                if(tentativas > 20) {
+                    alert("⚠️ O servidor está demorando muito para acordar. Tente novamente em instantes.");
+                    loading.style.display = 'none';
+                    break;
+                }
             }
         }
 
@@ -286,44 +316,10 @@
             `;
         }
 
-        function editarModulo(secao) {
-            const cardId = `card-${secao}`;
-            const card = document.getElementById(cardId);
-            fecharView();
-            document.getElementById('painel-principal').style.display = 'block';
-            card.style.display = 'block';
-            if(document.getElementById(`aba-${secao}`)) document.getElementById(`aba-${secao}`).remove();
-            toggleMenu();
-        }
-
-        function showParabens() {
-            const msg = document.getElementById('msg-parabens');
-            msg.style.display = 'block';
-            msg.style.opacity = '1';
-            setTimeout(() => {
-                msg.style.opacity = '0';
-                setTimeout(() => msg.style.display = 'none', 1000);
-            }, 2000);
-        }
-
-        function verDados(secao) {
-            const view = document.getElementById('view-card');
-            document.getElementById('painel-principal').style.display = 'none';
-            view.style.display = 'block';
-            
-            let html = `<h3>DADOS: ${secao.toUpperCase()}</h3><br>`;
-            for(let k in db[secao]) {
-                if(k !== 'checks') html += `<p><b>${k}:</b> ${db[secao][k]}</p>`;
-            }
-            html += `<button class="btn-registrar" style="background:#555" onclick="fecharView()">FECHAR</button>`;
-            view.innerHTML = html;
-            toggleMenu();
-        }
-
-        function fecharView() {
-            document.getElementById('view-card').style.display = 'none';
-            document.getElementById('painel-principal').style.display = 'block';
-        }
+        function editarModulo(secao) { fecharView(); document.getElementById('painel-principal').style.display = 'block'; document.getElementById(`card-${secao}`).style.display = 'block'; toggleMenu(); }
+        function showParabens() { const msg = document.getElementById('msg-parabens'); msg.style.display = 'block'; msg.style.opacity = '1'; setTimeout(() => { msg.style.opacity = '0'; setTimeout(() => msg.style.display = 'none', 1000); }, 2000); }
+        function verDados(secao) { const view = document.getElementById('view-card'); document.getElementById('painel-principal').style.display = 'none'; view.style.display = 'block'; let html = `<h3>DADOS: ${secao.toUpperCase()}</h3><br>`; for(let k in db[secao]) { if(k !== 'checks') html += `<p><b>${k}:</b> ${db[secao][k]}</p>`; } html += `<button class="btn-registrar" style="background:#555" onclick="fecharView()">FECHAR</button>`; view.innerHTML = html; toggleMenu(); }
+        function fecharView() { document.getElementById('view-card').style.display = 'none'; document.getElementById('painel-principal').style.display = 'block'; }
     </script>
 </body>
 </html>

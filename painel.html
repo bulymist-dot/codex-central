@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAINEL DE DADOS</title>
+    <style>
+        body { background: #000; color: #00ff41; font-family: monospace; padding: 20px; }
+        .registro { border: 1px solid #00ff41; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
+        button { background: #00ff41; border: none; padding: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h2>📡 CENTRAL DE DADOS</h2>
+    <button onclick="carregar()">ATUALIZAR LISTA</button>
+    <div id="dados">Clique no botão para carregar...</div>
+    <script>
+        async function carregar() {
+            const lista = document.getElementById('dados');
+            lista.innerHTML = "Buscando...";
+            try {
+                const res = await fetch('/ver');
+                const data = await res.json();
+                lista.innerHTML = data.length === 0 ? "Nenhum dado recebido ainda." : "";
+                data.forEach(reg => {
+                    lista.innerHTML += `<div class="registro">
+                        <strong>AGENTE:</strong> ${reg.nome}<br>
+                        <strong>DATA:</strong> ${new Date(reg.data).toLocaleString()}<br>
+                        <hr><pre>${JSON.stringify(reg.conteudo, null, 2)}</pre>
+                    </div>`;
+                });
+            } catch (e) { lista.innerHTML = "Erro ao conectar com o servidor."; }
+        }
+        window.onload = carregar;
+    </script>
+</body>
+</html>

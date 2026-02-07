@@ -3,65 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAINEL DE CONTROLE - CODEX</title>
+    <title>Codex | Sistema Operacional</title>
     <style>
-        body { background-color: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; }
-        .ficha { border: 1px solid #0f0; padding: 15px; margin-bottom: 10px; border-radius: 5px; background: #050505; }
-        .header { border-bottom: 2px solid #0f0; margin-bottom: 20px; padding-bottom: 10px; }
-        button { background: #0f0; color: #000; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 20px; }
-        .meta { color: #888; font-size: 0.8em; }
+        :root {
+            --win-blue: #0078d7;
+            --taskbar: rgba(0, 0, 0, 0.85);
+            --bg-dark: #002b36;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body {
+            background: #004a7c; /* Cor clássica de fundo Windows */
+            background-image: linear-gradient(135deg, #004a7c 0%, #002b36 100%);
+            height: 100vh;
+            overflow: hidden;
+            color: white;
+        }
+
+        /* Barra de Topo */
+        .top-bar {
+            height: 30px;
+            background: var(--taskbar);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Desktop Area */
+        #desktop {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            grid-auto-rows: 110px;
+            gap: 20px;
+            padding: 20px;
+            height: calc(100vh - 70px);
+            align-content: start;
+        }
+
+        /* Ícone da Pasta */
+        .folder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+
+        .folder:hover {
+            background: rgba(255, 255, 255, 0.1);
+            outline: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .folder-icon {
+            font-size: 45px;
+            margin-bottom: 8px;
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3));
+        }
+
+        .folder-name {
+            font-size: 12px;
+            text-align: center;
+            text-shadow: 1px 1px 2px black;
+            word-break: break-all;
+            max-width: 90px;
+        }
+
+        /* Janela de Conteúdo (Modal) */
+        .window {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 500px;
+            height: 60vh;
+            background: #f0f0f0;
+            color: #333;
+            border-radius: 8px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .window-header {
+            background: #fff;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .window-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+            line-height: 1.6;
+            font-family: 'Consolas', monospace;
+            background: white;
+            white-space: pre-wrap;
+        }
+
+        .close-btn {
+            background: #ff5f57;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Barra de Tarefas Inferior */
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+            background: var(--taskbar);
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+        }
+
+        .start-btn {
+            font-weight: bold;
+            color: var(--azul-claro);
+            margin-right: 20px;
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>📡 CENTRAL DE DADOS CODEX</h1>
-        <p>Status: <span id="status">CONECTANDO...</span></p>
+
+    <div class="top-bar">PANEL DARK PRIVADO</div>
+
+    <div id="desktop">
+        </div>
+
+    <div id="folder-window" class="window">
+        <div class="window-header">
+            <span id="window-title" style="color: #333; font-weight: bold;">Documento</span>
+            <button class="close-btn" onclick="closeWindow()">X</button>
+        </div>
+        <div id="window-body" class="window-content"></div>
     </div>
 
-    <button onclick="baixarDados()">ATUALIZAR LISTA DE AGENTES</button>
-    <div id="lista-fichas"></div>
+    <div class="taskbar">
+        <span class="start-btn">⊞ START</span>
+        <span id="clock" style="margin-left: auto; font-size: 12px;"></span>
+    </div>
 
     <script>
-        const servidor = 'https://codex-darc.onrender.com';
+        const SERVIDOR = "https://codex-darc.onrender.com";
 
-        async function baixarDados() {
-            const lista = document.getElementById('lista-fichas');
-            const status = document.getElementById('status');
-            
+        async function carregarDados() {
             try {
-                const resposta = await fetch(`${servidor}/dados`);
-                const fichas = await resposta.json();
-                
-                status.innerText = "ONLINE";
-                status.style.color = "#0f0";
-                lista.innerHTML = '';
+                const res = await fetch(`${SERVIDOR}/dados`);
+                const dados = await res.json();
+                const desktop = document.getElementById('desktop');
+                desktop.innerHTML = "";
 
-                if (fichas.length === 0) {
-                    lista.innerHTML = '<p>Nenhum dado recebido ainda...</p>';
-                    return;
-                }
-
-                fichas.reverse().forEach(ficha => {
-                    const div = document.createElement('div');
-                    div.className = 'ficha';
-                    div.innerHTML = `
-                        <div class="meta">ID: ${ficha.id} | Recebido em: ${ficha.hora}</div>
-                        <h3>Agente: ${ficha.agente}</h3>
-                        <pre>${ficha.dados}</pre>
-                        <hr style="border: 0.5px solid #222">
+                dados.reverse().forEach((item, index) => {
+                    const folder = document.createElement('div');
+                    folder.className = 'folder';
+                    folder.onclick = () => openWindow(item.nome, item.conteudo);
+                    
+                    folder.innerHTML = `
+                        <div class="folder-icon">📂</div>
+                        <div class="folder-name">${item.nome}</div>
                     `;
-                    lista.appendChild(div);
+                    desktop.appendChild(folder);
                 });
-            } catch (erro) {
-                status.innerText = "ERRO DE CONEXÃO";
-                status.style.color = "red";
-                console.error(erro);
+            } catch (err) {
+                console.error("Erro ao buscar dados");
             }
         }
 
-        // Atualiza automaticamente a cada 10 segundos
-        setInterval(baixarDados, 10000);
-        baixarDados();
+        function openWindow(nome, conteudo) {
+            document.getElementById('window-title').innerText = "Codex://Files/" + nome;
+            document.getElementById('window-body').innerText = conteudo;
+            document.getElementById('folder-window').style.display = 'flex';
+        }
+
+        function closeWindow() {
+            document.getElementById('folder-window').style.display = 'none';
+        }
+
+        // Relógio da Barra de Tarefas
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+        }, 1000);
+
+        // Atualiza a cada 10 segundos
+        carregarDados();
+        setInterval(carregarDados, 10000);
     </script>
 </body>
 </html>

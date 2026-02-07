@@ -50,12 +50,6 @@
         input[type="text"] { width: 100%; padding: 12px; border: 2px solid var(--cinza); border-radius: 6px; outline: none; font-size: 14px; }
         input.campo-erro { border-color: var(--erro) !important; }
 
-        .error-label { 
-            position: absolute; top: -18px; left: 0; background: var(--erro); 
-            color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; 
-            display: none; z-index: 5; font-weight: bold; 
-        }
-
         .row { display: flex; gap: 10px; }
         .row > div { flex: 1; }
 
@@ -67,15 +61,8 @@
 
         .btn-registrar { width: 100%; padding: 15px; background: var(--marinho); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
 
-        #msg-parabens { display: none; text-align: center; padding: 60px 20px; transition: opacity 1s ease; }
-        .view-card { display: none; background: white; padding: 25px; border-radius: 12px; border: 2px solid var(--azul-claro); }
-
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; z-index: 999; }
-        .overlay.active { display: block; }
-        
-        /* STATUS DE ENVIO */
         #loading-overlay { 
-            position: fixed; inset: 0; background: rgba(10, 25, 47, 0.9); 
+            position: fixed; inset: 0; background: rgba(10, 25, 47, 0.95); 
             display: none; flex-direction: column; align-items: center; justify-content: center; 
             z-index: 2000; color: var(--azul-claro); text-align: center; padding: 20px;
         }
@@ -85,17 +72,8 @@
 
     <div id="loading-overlay">
         <div style="font-size: 40px; margin-bottom: 20px;">📡</div>
-        <h3 id="status-texto">SINCRONIZANDO COM O CODEX...</h3>
-        <p style="font-size: 12px; margin-top: 10px; color: white;">Aguarde, o servidor está acordando para receber sua ficha.</p>
-    </div>
-
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h3 style="color: var(--azul-claro)">REGISTROS ARP</h3>
-        </div>
-        <div id="lista-abas"></div>
+        <h3 id="status-texto">CONECTANDO AO CODEX...</h3>
+        <p style="font-size: 12px; margin-top: 10px; color: white;">Aguarde, estamos acordando o servidor central.</p>
     </div>
 
     <div class="main-content">
@@ -106,223 +84,73 @@
         </header>
 
         <main>
-            <div id="msg-parabens">
-                <h1 style="color: var(--sucesso); font-size: 2.5rem;">🎉 PARABÉNS!</h1>
-                <p style="color: var(--marinho); font-size: 1.2rem; font-weight: bold;">MÓDULO ATUALIZADO NO CODEX.</p>
-            </div>
-
             <div class="container" id="painel-principal">
-                
                 <div class="card" id="card-ident">
                     <h2>🧾 IDENTIFICAÇÃO</h2>
-                    <div class="input-group"><div class="error-label">Obrigatório</div><label>Nome Completo</label><input type="text" id="nome" class="req" onfocus="limparErro(this)"></div>
-                    <div class="input-group"><div class="error-label">Obrigatório</div><label>Codinome</label><input type="text" id="cod" class="req" onfocus="limparErro(this)"></div>
-                    <div class="row">
-                        <div class="input-group"><label>Nascimento</label><input type="text" id="nasc" class="req" onfocus="limparErro(this)"></div>
-                        <div class="input-group"><label>Idade</label><input type="text" id="idade" class="req" onfocus="limparErro(this)"></div>
-                    </div>
-                    <div class="row">
-                        <div class="input-group"><label>Naturalidade</label><input type="text" id="nat" class="req" onfocus="limparErro(this)"></div>
-                        <div class="input-group"><label>Nacionalidade</label><input type="text" id="nac" class="req" onfocus="limparErro(this)"></div>
-                    </div>
-                    <div class="row">
-                        <div class="input-group"><label>Profissão</label><input type="text" id="prof" class="req" onfocus="limparErro(this)"></div>
-                        <div class="input-group"><label>Religião</label><input type="text" id="rel" class="req" onfocus="limparErro(this)"></div>
-                    </div>
-                    <button class="btn-registrar" onclick="salvarCard('card-ident', 'ident')">Finalizar Identificação</button>
+                    <div class="input-group"><label>Nome Completo</label><input type="text" id="nome" class="req"></div>
+                    <div class="input-group"><label>Codinome</label><input type="text" id="cod" class="req"></div>
+                    <button class="btn-registrar" onclick="salvarCard('card-ident', 'ident')">Próxima Etapa</button>
                 </div>
 
-                <div class="card" id="card-fisico">
-                    <h2>⚖️ DADOS FÍSICOS</h2>
-                    <div class="row">
-                        <div class="input-group"><label>Altura (m)</label><input type="text" id="alt" class="req" onfocus="limparErro(this)"></div>
-                        <div class="input-group"><label>Peso (kg)</label><input type="text" id="peso" class="req" onfocus="limparErro(this)"></div>
-                    </div>
-                    <div class="row">
-                        <div class="input-group"><label>Cor da Pele</label><input type="text" id="pele" class="req" onfocus="limparErro(this)"></div>
-                        <div class="input-group"><label>Tipo Físico</label><input type="text" id="tipo" class="req" onfocus="limparErro(this)"></div>
-                    </div>
-                    <div class="row">
-                        <div class="input-group"><label>Cor dos Olhos</label><input type="text" id="olhos" class="req" onfocus="limparErro(this)"></div>
-                        <div class="input-group"><label>Cor do Cabelo</label><input type="text" id="cabelo" class="req" onfocus="limparErro(this)"></div>
-                    </div>
-                    <div class="input-group"><label>Marcas / Sinais</label><input type="text" id="sinais" class="req" onfocus="limparErro(this)"></div>
-                    <button class="btn-registrar" onclick="salvarCard('card-fisico', 'fisico')">Finalizar Dados Físicos</button>
+                <div class="card" id="card-final" style="display:none;">
+                    <h2>🏁 FINALIZAR REGISTRO</h2>
+                    <p>Confirme se todos os dados foram preenchidos corretamente nas abas laterais.</p>
+                    <button class="btn-registrar" onclick="enviarFinal()">ARQUIVAR NO CODEX CENTRAL</button>
                 </div>
-
-                <div class="card" id="card-outros">
-                    <h2>📍 OUTROS DADOS</h2>
-                    <div class="input-group"><label>Bairro</label><input type="text" id="bairro" class="req" onfocus="limparErro(this)"></div>
-                    <div class="input-group"><label>Escolaridade</label><input type="text" id="esc" class="req" onfocus="limparErro(this)"></div>
-                    <div class="check-container req-btn" id="g-pass">
-                        <label>Passaporte?</label>
-                        <div class="check-row">
-                            <div class="btn-check" id="pass-sim" onclick="setCheck('g-pass', this, 'sim')">SIM</div>
-                            <div class="btn-check" id="pass-nao" onclick="setCheck('g-pass', this, 'nao')">NÃO</div>
-                        </div>
-                    </div>
-                    <div class="check-container req-btn" id="g-cnh">
-                        <label>Possui CNH?</label>
-                        <div class="check-row">
-                            <div class="btn-check" id="cnh-sim" onclick="setCheck('g-cnh', this, 'sim')">SIM</div>
-                            <div class="btn-check" id="cnh-nao" onclick="setCheck('g-cnh', this, 'nao')">NÃO</div>
-                        </div>
-                    </div>
-                    <div class="input-group"><label>Categorias / Situação</label><input type="text" id="cnh-st" class="req" onfocus="limparErro(this)"></div>
-                    <button class="btn-registrar" onclick="salvarCard('card-outros', 'outros')">Finalizar Outros Dados</button>
-                </div>
-
-                <div class="card" id="card-mob">
-                    <h2>🚦 MOBILIDADE</h2>
-                    <div class="check-container req-btn" id="g-mob">
-                        <label>Selecione os Transportes:</label>
-                        <div class="check-row">
-                            <div class="btn-check" id="m-carro" onclick="toggleMulti(this)">Carro</div>
-                            <div class="btn-check" id="m-moto" onclick="toggleMulti(this)">Moto</div>
-                            <div class="btn-check" id="m-bike" onclick="toggleMulti(this)">Bicicleta</div>
-                            <div class="btn-check" id="m-barco" onclick="toggleMulti(this)">Barco</div>
-                            <div class="btn-check" id="m-card" onclick="toggleMulti(this)">Cartão</div>
-                        </div>
-                    </div>
-                    <div class="input-group"><label>Modelo e Cor do Veículo</label><input type="text" id="v-det"></div>
-                    <button class="btn-registrar" id="btn-final" onclick="enviarFinal()">Finalizar Ficha ARP</button>
-                </div>
-
             </div>
-
-            <div class="container view-card" id="view-card"></div>
         </main>
     </div>
 
     <script>
         let db = {};
-
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-
-        function limparErro(el) {
-            el.classList.remove('campo-erro');
-            const label = el.parentElement.querySelector('.error-label');
-            if(label) label.style.display = 'none';
-        }
-
-        function setCheck(groupId, el, tipo) {
-            const group = document.getElementById(groupId);
-            group.querySelectorAll('.btn-check').forEach(b => b.classList.remove('sim-active', 'nao-active', 'escolhido'));
-            el.classList.add('escolhido', tipo === 'sim' ? 'sim-active' : 'nao-active');
-            group.style.borderColor = "transparent";
-        }
-
-        function toggleMulti(el) {
-            el.classList.toggle('sim-active');
-            el.classList.toggle('escolhido');
-            el.closest('.check-container').style.borderColor = "transparent";
-        }
+        const SERVIDOR = "https://codex-darc.onrender.com";
 
         function salvarCard(cardId, secao) {
             const card = document.getElementById(cardId);
-            const inputs = card.querySelectorAll('input.req');
-            const checks = card.querySelectorAll('.req-btn');
-            let erro = false;
-
-            inputs.forEach(i => {
-                if(i.value.trim() === "") { i.classList.add('campo-erro'); erro = true; }
-            });
-
-            checks.forEach(c => {
-                if(!c.querySelector('.escolhido')) { c.style.borderColor = "var(--erro)"; erro = true; }
-            });
-
-            if(erro) return;
-
-            const nomeP = document.getElementById('nome').value.toUpperCase();
             db[secao] = {};
             card.querySelectorAll('input').forEach(i => { db[secao][i.id] = i.value; });
-            
-            db[secao].checks = [];
-            card.querySelectorAll('.btn-check.escolhido').forEach(b => db[secao].checks.push(b.innerText));
-
             card.style.display = 'none';
-            gerarAba(secao, nomeP);
-            showParabens();
+            document.getElementById('card-final').style.display = 'block';
         }
 
         async function enviarFinal() {
-            salvarCard('card-mob', 'mob');
-
             const loading = document.getElementById('loading-overlay');
             const statusTexto = document.getElementById('status-texto');
             loading.style.display = 'flex';
             
-            const nomeAgente = document.getElementById('nome').value || "Agente Desconhecido";
+            const nomeAgente = db.ident?.nome || "Agente Desconhecido";
             
-            // FORMATAÇÃO DOS DADOS PARA O PAINEL
-            let textoFicha = `=== FICHA ARP ===\n`;
-            for(let secao in db) {
-                textoFicha += `\n[${secao.toUpperCase()}]\n`;
-                for(let campo in db[secao]) {
-                    if(campo !== 'checks') {
-                        textoFicha += `${campo}: ${db[secao][campo]}\n`;
-                    } else {
-                        textoFicha += `Seleções: ${db[secao].checks.join(', ')}\n`;
-                    }
-                }
-            }
+            // Formatando os dados para o seu painel
+            const conteudoFormatado = `NOVA FICHA ARP\nAgente: ${nomeAgente}\nCodinome: ${db.ident?.cod}\nDados: ${JSON.stringify(db)}`;
 
             let sucesso = false;
             let tentativas = 0;
 
-            while (!sucesso) {
+            while (!sucesso && tentativas < 10) {
                 tentativas++;
-                statusTexto.innerText = `CONECTANDO AO CODEX (Tentativa ${tentativas})...`;
+                statusTexto.innerText = `TENTATIVA DE CONEXÃO ${tentativas}...`;
                 
                 try {
-                    const response = await fetch("https://codex-darc.onrender.com/registrar", {
+                    const res = await fetch(`${SERVIDOR}/registrar`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            nome: nomeAgente,
-                            conteudo: textoFicha // Envia a ficha formatada
-                        })
+                        body: JSON.stringify({ nome: nomeAgente, conteudo: conteudoFormatado })
                     });
 
-                    if (response.ok) {
+                    if (res.ok) {
                         sucesso = true;
-                        loading.style.display = 'none';
-                        alert("✅ SUCESSO! DADOS ENVIADOS AO CODEX CENTRAL.");
-                        location.reload(); 
+                        alert("✅ FICHA ARQUIVADA COM SUCESSO!");
+                        location.reload();
                     }
                 } catch (err) {
-                    console.log("Aguardando servidor...");
-                    await new Promise(resolve => setTimeout(resolve, 4000));
-                }
-                
-                if(tentativas > 15) {
-                    alert("⚠️ O servidor está demorando. Tente novamente em instantes.");
-                    loading.style.display = 'none';
-                    break;
+                    await new Promise(r => setTimeout(r, 5000)); // Espera 5 segundos para o servidor ligar
                 }
             }
-        }
-
-        function gerarAba(secao, nome) {
-            const lista = document.getElementById('lista-abas');
-            let item = document.getElementById(`aba-${secao}`);
-            if(!item) {
-                item = document.createElement('div');
-                item.id = `aba-${secao}`;
-                item.className = 'aba-item';
-                lista.appendChild(item);
+            if(!sucesso) {
+                alert("❌ Erro ao conectar. Tente novamente em 1 minuto.");
+                loading.style.display = 'none';
             }
-            item.innerHTML = `<div class="aba-info">📂 ${secao}: ${nome}</div><div class="aba-btns"><button class="aba-mini-btn btn-ver" onclick="verDados('${secao}')">Ver</button><button class="aba-mini-btn btn-edt" onclick="editarModulo('${secao}')">Editar</button></div>`;
         }
-
-        function editarModulo(secao) { fecharView(); document.getElementById('painel-principal').style.display = 'block'; document.getElementById(`card-${secao}`).style.display = 'block'; toggleMenu(); }
-        function showParabens() { const msg = document.getElementById('msg-parabens'); msg.style.display = 'block'; msg.style.opacity = '1'; setTimeout(() => { msg.style.opacity = '0'; setTimeout(() => msg.style.display = 'none', 1000); }, 2000); }
-        function verDados(secao) { const view = document.getElementById('view-card'); document.getElementById('painel-principal').style.display = 'none'; view.style.display = 'block'; let html = `<h3>DADOS: ${secao.toUpperCase()}</h3><br>`; for(let k in db[secao]) { if(k !== 'checks') html += `<p><b>${k}:</b> ${db[secao][k]}</p>`; } html += `<button class="btn-registrar" style="background:#555" onclick="fecharView()">FECHAR</button>`; view.innerHTML = html; toggleMenu(); }
-        function fecharView() { document.getElementById('view-card').style.display = 'none'; document.getElementById('painel-principal').style.display = 'block'; }
     </script>
 </body>
 </html>

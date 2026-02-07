@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ESTA LINHA É A CHAVE: Ela libera o acesso aos seus arquivos .html
+// ESTA LINHA É OBRIGATÓRIA: Ela permite que o Render mostre seus arquivos .html
 app.use(express.static(__dirname));
 
 let bancoDados = []; 
@@ -26,7 +26,7 @@ app.get('/dados', (req, res) => {
     res.json(bancoDados);
 });
 
-// Rota reserva para garantir que o painel abra
+// Rota de segurança para o painel
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'painel.html'));
 });

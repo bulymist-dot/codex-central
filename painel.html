@@ -21,7 +21,6 @@
             color: white;
         }
 
-        /* Barra de Topo Privada */
         .top-bar {
             height: 35px;
             background: #000;
@@ -35,7 +34,6 @@
             text-transform: uppercase;
         }
 
-        /* Desktop Area */
         #desktop {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
@@ -47,7 +45,6 @@
             overflow-y: auto;
         }
 
-        /* Ícone da Pasta Windows */
         .folder {
             display: flex;
             flex-direction: column;
@@ -56,20 +53,12 @@
             cursor: pointer;
             padding: 10px;
             border-radius: 3px;
-            border: 1px solid transparent;
             transition: 0.1s;
         }
 
-        .folder:hover {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
+        .folder:hover { background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3); }
 
-        .folder-icon {
-            font-size: 50px;
-            margin-bottom: 5px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-        }
+        .folder-icon { font-size: 50px; margin-bottom: 5px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
 
         .folder-name {
             font-size: 11px;
@@ -81,7 +70,6 @@
             text-transform: uppercase;
         }
 
-        /* Janela do Windows */
         .window {
             position: fixed;
             top: 50%;
@@ -97,7 +85,6 @@
             display: none;
             flex-direction: column;
             z-index: 2000;
-            border: 1px solid #999;
         }
 
         .window-header {
@@ -117,7 +104,7 @@
             font-family: 'Consolas', monospace;
             white-space: pre-wrap;
             font-size: 14px;
-            background: #fafafa;
+            background: #fff;
             color: #333;
         }
 
@@ -131,7 +118,6 @@
             font-size: 16px;
         }
 
-        /* Taskbar */
         .taskbar {
             position: fixed;
             bottom: 0;
@@ -144,12 +130,7 @@
             z-index: 3000;
         }
 
-        .clock {
-            margin-left: auto;
-            font-size: 12px;
-            text-align: right;
-            padding-right: 10px;
-        }
+        .clock { margin-left: auto; font-size: 11px; text-align: right; padding-right: 10px; }
     </style>
 </head>
 <body>
@@ -160,7 +141,7 @@
 
     <div id="folder-window" class="window">
         <div class="window-header">
-            <span id="window-title" style="font-size: 12px;">Bloco de Notas</span>
+            <span id="window-title" style="font-size: 12px; font-weight: bold; color: #333;">Bloco de Notas</span>
             <button class="close-btn" onclick="closeWindow()">×</button>
         </div>
         <div id="window-body" class="window-content"></div>
@@ -183,14 +164,12 @@
                 desktop.innerHTML = "";
 
                 dados.reverse().forEach((item) => {
-                    // O seu servidor Render envia 'nome' e 'conteudo'
-                    // Caso o campo mude, usamos uma alternativa segura
-                    const nomeFinal = item.nome || item.agente || "REGISTRO_OCULTO";
-                    const infoFinal = item.conteudo || item.texto || "Sem informações disponíveis.";
-
+                    // Tenta achar o nome em qualquer campo comum
+                    const nomeFinal = item.nome || item.agente || item.username || "REGISTRO_OCULTO";
+                    
                     const folder = document.createElement('div');
                     folder.className = 'folder';
-                    folder.onclick = () => openWindow(nomeFinal, infoFinal);
+                    folder.onclick = () => openWindow(nomeFinal, item);
                     
                     folder.innerHTML = `
                         <div class="folder-icon">📂</div>
@@ -199,20 +178,24 @@
                     desktop.appendChild(folder);
                 });
             } catch (err) {
-                console.error("Erro ao carregar dados do Codex.");
+                console.error("Erro na conexão");
             }
         }
 
-        function openWindow(nome, conteudo) {
+        function openWindow(nome, objetoCompleto) {
             document.getElementById('window-title').innerText = nome + ".txt - Bloco de Notas";
             
-            // Se o conteúdo for um objeto (JSON), vamos transformar em texto bonito
-            let textoExibicao = conteudo;
-            if (typeof conteudo === 'object') {
-                textoExibicao = JSON.stringify(conteudo, null, 4);
+            // Aqui está a mágica: ele pega TODAS as chaves e valores do banco de dados
+            let conteudoFormatado = "--- INFORMAÇÕES DO SISTEMA ---\n\n";
+            
+            for (const [chave, valor] of Object.entries(objetoCompleto)) {
+                // Ignora o ID interno do banco e chaves vazias
+                if (chave !== '_id' && chave !== '__v' && valor) {
+                    conteudoFormatado += `${chave.toUpperCase()}: ${valor}\n`;
+                }
             }
 
-            document.getElementById('window-body').innerText = textoExibicao;
+            document.getElementById('window-body').innerText = conteudoFormatado;
             document.getElementById('folder-window').style.display = 'flex';
         }
 
@@ -228,7 +211,7 @@
         setInterval(updateClock, 1000);
         updateClock();
         carregarDados();
-        setInterval(carregarDados, 10000); // Atualiza a cada 10 segundos
+        setInterval(carregarDados, 10000);
     </script>
 </body>
 </html>

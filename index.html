@@ -73,7 +73,6 @@
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; z-index: 999; }
         .overlay.active { display: block; }
         
-        /* NOVO STATUS DE ENVIO */
         #loading-overlay { 
             position: fixed; inset: 0; background: rgba(10, 25, 47, 0.9); 
             display: none; flex-direction: column; align-items: center; justify-content: center; 
@@ -115,8 +114,8 @@
                 
                 <div class="card" id="card-ident">
                     <h2>🧾 IDENTIFICAÇÃO</h2>
-                    <div class="input-group"><div class="error-label">Obrigatório</div><label>Nome Completo</label><input type="text" id="nome" class="req" onfocus="limparErro(this)"></div>
-                    <div class="input-group"><div class="error-label">Obrigatório</div><label>Codinome</label><input type="text" id="cod" class="req" onfocus="limparErro(this)"></div>
+                    <div class="input-group"><label>Nome Completo</label><input type="text" id="nome" class="req" onfocus="limparErro(this)"></div>
+                    <div class="input-group"><label>Codinome</label><input type="text" id="cod" class="req" onfocus="limparErro(this)"></div>
                     <div class="row">
                         <div class="input-group"><label>Nascimento</label><input type="text" id="nasc" class="req" onfocus="limparErro(this)"></div>
                         <div class="input-group"><label>Idade</label><input type="text" id="idade" class="req" onfocus="limparErro(this)"></div>
@@ -204,8 +203,6 @@
 
         function limparErro(el) {
             el.classList.remove('campo-erro');
-            const label = el.parentElement.querySelector('.error-label');
-            if(label) label.style.display = 'none';
         }
 
         function setCheck(groupId, el, tipo) {
@@ -237,20 +234,20 @@
 
             if(erro) return;
 
-            const nomeP = document.getElementById('nome').value.toUpperCase();
             db[secao] = {};
             card.querySelectorAll('input').forEach(i => { db[secao][i.id] = i.value; });
             
             db[secao].checks = [];
-            card.querySelectorAll('.btn-check.escolhido').forEach(b => db[secao].checks.push(b.id));
+            card.querySelectorAll('.btn-check.escolhido').forEach(b => db[secao].checks.push(b.innerText));
 
+            const nomeP = document.getElementById('nome').value.toUpperCase();
             card.style.display = 'none';
             gerarAba(secao, nomeP);
             showParabens();
         }
 
-        // NOVA FUNÇÃO DE ENVIO COM "INSISTÊNCIA" (LOOP)
         async function enviarFinal() {
+            // Salva a última parte antes de enviar
             salvarCard('card-mob', 'mob');
 
             const loading = document.getElementById('loading-overlay');
@@ -261,7 +258,8 @@
             let sucesso = false;
             let tentativas = 0;
 
-            while (!sucesso) {
+            // Loop de tentativa para acordar o Render
+            while (!sucesso && tentativas < 15) {
                 tentativas++;
                 statusTexto.innerText = `CONECTANDO AO CODEX (Tentativa ${tentativas})...`;
                 
@@ -279,34 +277,29 @@
                         sucesso = true;
                         loading.style.display = 'none';
                         alert("✅ SUCESSO! DADOS ENVIADOS AO CODEX CENTRAL.");
-                        location.reload(); // Limpa a ficha após enviar
+                        location.reload();
                     }
                 } catch (err) {
-                    console.log("Servidor dormindo, tentando novamente em 5 segundos...");
-                    // Espera 5 segundos antes de tentar de novo
-                    await new Promise(resolve => setTimeout(resolve, 5000));
+                    console.log("Servidor em repouso...");
+                    await new Promise(res => setTimeout(res, 4000));
                 }
-                
-                // Limite de segurança para não ficar em loop infinito se o link estiver errado
-                if(tentativas > 20) {
-                    alert("⚠️ O servidor está demorando muito para acordar. Tente novamente em instantes.");
-                    loading.style.display = 'none';
-                    break;
-                }
+            }
+
+            if(!sucesso) {
+                alert("⚠️ Falha na conexão. Tente novamente.");
+                loading.style.display = 'none';
             }
         }
 
         function gerarAba(secao, nome) {
             const lista = document.getElementById('lista-abas');
             let item = document.getElementById(`aba-${secao}`);
-            
             if(!item) {
                 item = document.createElement('div');
                 item.id = `aba-${secao}`;
                 item.className = 'aba-item';
                 lista.appendChild(item);
             }
-
             item.innerHTML = `
                 <div class="aba-info">📂 ${secao}: ${nome}</div>
                 <div class="aba-btns">

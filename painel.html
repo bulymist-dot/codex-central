@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Codex | Painel Windows</title>
+    <title>Codex | Painel Windows Final</title>
     <style>
         :root {
             --win-blue: #0078d7;
@@ -72,15 +72,16 @@
         }
 
         .folder-name {
-            font-size: 12px;
+            font-size: 11px;
             text-align: center;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
             word-wrap: break-word;
             max-width: 100px;
             font-weight: 500;
+            text-transform: uppercase;
         }
 
-        /* Janela de Conteúdo (Modal) */
+        /* Janela do Windows */
         .window {
             position: fixed;
             top: 50%;
@@ -112,11 +113,12 @@
             padding: 20px;
             overflow-y: auto;
             flex: 1;
-            line-height: 1.5;
-            font-family: 'Consolas', 'Courier New', monospace;
+            line-height: 1.6;
+            font-family: 'Consolas', monospace;
             white-space: pre-wrap;
             font-size: 14px;
             background: #fafafa;
+            color: #333;
         }
 
         .close-btn {
@@ -128,9 +130,8 @@
             color: white;
             font-size: 16px;
         }
-        .close-btn:hover { background: #f1707a; }
 
-        /* Barra de Tarefas Inferior */
+        /* Taskbar */
         .taskbar {
             position: fixed;
             bottom: 0;
@@ -140,14 +141,7 @@
             display: flex;
             align-items: center;
             padding: 0 10px;
-            backdrop-filter: blur(5px);
             z-index: 3000;
-        }
-
-        .start-btn {
-            font-weight: bold;
-            padding: 5px 15px;
-            cursor: default;
         }
 
         .clock {
@@ -162,24 +156,22 @@
 
     <div class="top-bar">PANEL DARK PRIVADO</div>
 
-    <div id="desktop">
-        </div>
+    <div id="desktop"></div>
 
     <div id="folder-window" class="window">
         <div class="window-header">
-            <span id="window-title" style="font-size: 13px; font-weight: 500;">Explorador de Arquivos</span>
+            <span id="window-title" style="font-size: 12px;">Bloco de Notas</span>
             <button class="close-btn" onclick="closeWindow()">×</button>
         </div>
         <div id="window-body" class="window-content"></div>
     </div>
 
     <div class="taskbar">
-        <div class="start-btn">⊞ START</div>
+        <div style="font-weight: bold; padding: 0 15px;">⊞ START</div>
         <div class="clock" id="clock"></div>
     </div>
 
     <script>
-        // O endereço que você confirmou que funciona
         const SERVIDOR = "https://codex-darc.onrender.com";
 
         async function carregarDados() {
@@ -190,29 +182,37 @@
                 const desktop = document.getElementById('desktop');
                 desktop.innerHTML = "";
 
-                // Corrigindo o loop para pegar o nome e o conteúdo corretamente
                 dados.reverse().forEach((item) => {
-                    // Verificação de segurança: se item.nome não existir, usa 'Usuario_Anonimo'
-                    const nomeExibicao = item.nome || "Novo_Registro";
-                    
+                    // O seu servidor Render envia 'nome' e 'conteudo'
+                    // Caso o campo mude, usamos uma alternativa segura
+                    const nomeFinal = item.nome || item.agente || "REGISTRO_OCULTO";
+                    const infoFinal = item.conteudo || item.texto || "Sem informações disponíveis.";
+
                     const folder = document.createElement('div');
                     folder.className = 'folder';
-                    folder.onclick = () => openWindow(nomeExibicao, item.conteudo);
+                    folder.onclick = () => openWindow(nomeFinal, infoFinal);
                     
                     folder.innerHTML = `
                         <div class="folder-icon">📂</div>
-                        <div class="folder-name">${nomeExibicao}</div>
+                        <div class="folder-name">${nomeFinal}</div>
                     `;
                     desktop.appendChild(folder);
                 });
             } catch (err) {
-                console.error("Erro na conexão com o Codex");
+                console.error("Erro ao carregar dados do Codex.");
             }
         }
 
         function openWindow(nome, conteudo) {
-            document.getElementById('window-title').innerText = "C:\\Codex\\Agentes\\" + nome + ".txt";
-            document.getElementById('window-body').innerText = conteudo;
+            document.getElementById('window-title').innerText = nome + ".txt - Bloco de Notas";
+            
+            // Se o conteúdo for um objeto (JSON), vamos transformar em texto bonito
+            let textoExibicao = conteudo;
+            if (typeof conteudo === 'object') {
+                textoExibicao = JSON.stringify(conteudo, null, 4);
+            }
+
+            document.getElementById('window-body').innerText = textoExibicao;
             document.getElementById('folder-window').style.display = 'flex';
         }
 
@@ -220,20 +220,15 @@
             document.getElementById('folder-window').style.display = 'none';
         }
 
-        // Relógio Windows
         function updateClock() {
             const now = new Date();
-            const time = now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-            const date = now.toLocaleDateString('pt-BR');
-            document.getElementById('clock').innerHTML = `${time}<br>${date}`;
+            document.getElementById('clock').innerHTML = now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}) + "<br>" + now.toLocaleDateString('pt-BR');
         }
 
         setInterval(updateClock, 1000);
         updateClock();
-
-        // Carrega os dados e atualiza a cada 10 segundos
         carregarDados();
-        setInterval(carregarDados, 10000);
+        setInterval(carregarDados, 10000); // Atualiza a cada 10 segundos
     </script>
 </body>
 </html>

@@ -5,25 +5,22 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Memória para guardar as fichas (limpa se o servidor reiniciar)
-let bancoDados = [];
+let bancoDados = []; // Onde as fichas ficam guardadas
 
-// Rota para receber do index.html
 app.post('/registrar', (req, res) => {
     const novaFicha = {
         id: Date.now(),
         agente: req.body.nome,
-        dados: req.body.conteudo, // Aqui entra Identificação, Físico, etc.
+        dados: req.body.conteudo,
         hora: new Date().toLocaleString('pt-BR')
     };
     bancoDados.push(novaFicha);
-    res.status(200).json({ status: "Ficha arquivada com sucesso" });
+    res.status(200).json({ status: "Sucesso" });
 });
 
-// Rota para o painel.html ler as fichas
 app.get('/dados', (req, res) => {
     res.json(bancoDados);
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Codex operando na porta ${PORT}`));
+app.listen(PORT, () => console.log("Servidor Online"));

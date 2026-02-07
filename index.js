@@ -5,27 +5,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Nosso banco de dados temporário (em memória)
-let registros = [];
+// Memória para guardar as fichas (limpa se o servidor reiniciar)
+let bancoDados = [];
 
-// Rota para o Cliente enviar dados
+// Rota para receber do index.html
 app.post('/registrar', (req, res) => {
     const novaFicha = {
         id: Date.now(),
         agente: req.body.nome,
-        dados: req.body.conteudo,
-        hora: new Date().toLocaleTimeString()
+        dados: req.body.conteudo, // Aqui entra Identificação, Físico, etc.
+        hora: new Date().toLocaleString('pt-BR')
     };
-    registros.push(novaFicha);
-    console.log("Ficha recebida de:", novaFicha.agente);
-    res.status(200).json({ mensagem: "Enviado com sucesso!" });
+    bancoDados.push(novaFicha);
+    res.status(200).json({ status: "Ficha arquivada com sucesso" });
 });
 
-// Rota para o Painel ler os dados
+// Rota para o painel.html ler as fichas
 app.get('/dados', (req, res) => {
-    res.json(registros);
+    res.json(bancoDados);
 });
 
-// Porta do servidor
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+app.listen(PORT, () => console.log(`Codex operando na porta ${PORT}`));

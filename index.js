@@ -1,11 +1,15 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-let bancoDados = []; // Onde as fichas ficam guardadas
+// ESTA LINHA É A CHAVE: Ela libera o acesso aos seus arquivos .html
+app.use(express.static(__dirname));
+
+let bancoDados = []; 
 
 app.post('/registrar', (req, res) => {
     const novaFicha = {
@@ -20,6 +24,11 @@ app.post('/registrar', (req, res) => {
 
 app.get('/dados', (req, res) => {
     res.json(bancoDados);
+});
+
+// Rota reserva para garantir que o painel abra
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'painel.html'));
 });
 
 const PORT = process.env.PORT || 3000;

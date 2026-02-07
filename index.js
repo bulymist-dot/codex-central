@@ -5,23 +5,27 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-let bancoDeDados = []; // Memória temporária
+// Nosso banco de dados temporário (em memória)
+let registros = [];
 
-// Rota onde o cliente (index.html) joga os dados
+// Rota para o Cliente enviar dados
 app.post('/registrar', (req, res) => {
-    const novo = {
+    const novaFicha = {
         id: Date.now(),
-        nome: req.body.nome,
-        conteudo: req.body.conteudo,
-        timestamp: new Date()
+        agente: req.body.nome,
+        dados: req.body.conteudo,
+        hora: new Date().toLocaleTimeString()
     };
-    bancoDeDados.push(novo);
-    res.status(200).send({ status: "Sucesso" });
+    registros.push(novaFicha);
+    console.log("Ficha recebida de:", novaFicha.agente);
+    res.status(200).json({ mensagem: "Enviado com sucesso!" });
 });
 
-// Rota onde o painel (painel.html) busca os dados
+// Rota para o Painel ler os dados
 app.get('/dados', (req, res) => {
-    res.json(bancoDeDados);
+    res.json(registros);
 });
 
-app.listen(process.env.PORT || 3000);
+// Porta do servidor
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));

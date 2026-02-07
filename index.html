@@ -50,6 +50,12 @@
         input[type="text"] { width: 100%; padding: 12px; border: 2px solid var(--cinza); border-radius: 6px; outline: none; font-size: 14px; }
         input.campo-erro { border-color: var(--erro) !important; }
 
+        .error-label { 
+            position: absolute; top: -18px; left: 0; background: var(--erro); 
+            color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; 
+            display: none; z-index: 5; font-weight: bold; 
+        }
+
         .row { display: flex; gap: 10px; }
         .row > div { flex: 1; }
 
@@ -61,6 +67,12 @@
 
         .btn-registrar { width: 100%; padding: 15px; background: var(--marinho); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
 
+        #msg-parabens { display: none; text-align: center; padding: 60px 20px; transition: opacity 1s ease; }
+        .view-card { display: none; background: white; padding: 25px; border-radius: 12px; border: 2px solid var(--azul-claro); }
+
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; z-index: 999; }
+        .overlay.active { display: block; }
+        
         #loading-overlay { 
             position: fixed; inset: 0; background: rgba(10, 25, 47, 0.95); 
             display: none; flex-direction: column; align-items: center; justify-content: center; 
@@ -72,8 +84,17 @@
 
     <div id="loading-overlay">
         <div style="font-size: 40px; margin-bottom: 20px;">📡</div>
-        <h3 id="status-texto">CONECTANDO AO CODEX...</h3>
-        <p style="font-size: 12px; margin-top: 10px; color: white;">Aguarde, estamos acordando o servidor central.</p>
+        <h3 id="status-texto">SINCRONIZANDO COM O CODEX...</h3>
+        <p style="font-size: 12px; margin-top: 10px; color: white;">Aguarde enquanto o servidor central processa os dados.</p>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3 style="color: var(--azul-claro)">REGISTROS ARP</h3>
+        </div>
+        <div id="lista-abas"></div>
     </div>
 
     <div class="main-content">
@@ -84,20 +105,55 @@
         </header>
 
         <main>
+            <div id="msg-parabens">
+                <h1 style="color: var(--sucesso); font-size: 2.5rem;">🎉 PARABÉNS!</h1>
+                <p style="color: var(--marinho); font-size: 1.2rem; font-weight: bold;">MÓDULO ATUALIZADO NO CODEX.</p>
+            </div>
+
             <div class="container" id="painel-principal">
                 <div class="card" id="card-ident">
                     <h2>🧾 IDENTIFICAÇÃO</h2>
-                    <div class="input-group"><label>Nome Completo</label><input type="text" id="nome" class="req"></div>
-                    <div class="input-group"><label>Codinome</label><input type="text" id="cod" class="req"></div>
+                    <div class="input-group"><label>Nome Completo</label><input type="text" id="nome" class="req" onfocus="limparErro(this)"></div>
+                    <div class="input-group"><label>Codinome</label><input type="text" id="cod" class="req" onfocus="limparErro(this)"></div>
+                    <div class="row">
+                        <div class="input-group"><label>Nascimento</label><input type="text" id="nasc" class="req"></div>
+                        <div class="input-group"><label>Idade</label><input type="text" id="idade" class="req"></div>
+                    </div>
+                    <div class="row">
+                        <div class="input-group"><label>Naturalidade</label><input type="text" id="nat" class="req"></div>
+                        <div class="input-group"><label>Nacionalidade</label><input type="text" id="nac" class="req"></div>
+                    </div>
                     <button class="btn-registrar" onclick="salvarCard('card-ident', 'ident')">Próxima Etapa</button>
                 </div>
 
-                <div class="card" id="card-final" style="display:none;">
-                    <h2>🏁 FINALIZAR REGISTRO</h2>
-                    <p>Confirme se todos os dados foram preenchidos corretamente nas abas laterais.</p>
-                    <button class="btn-registrar" onclick="enviarFinal()">ARQUIVAR NO CODEX CENTRAL</button>
+                <div class="card" id="card-fisico" style="display:none;">
+                    <h2>⚖️ DADOS FÍSICOS</h2>
+                    <div class="row">
+                        <div class="input-group"><label>Altura (m)</label><input type="text" id="alt" class="req"></div>
+                        <div class="input-group"><label>Peso (kg)</label><input type="text" id="peso" class="req"></div>
+                    </div>
+                    <div class="row">
+                        <div class="input-group"><label>Pele</label><input type="text" id="pele" class="req"></div>
+                        <div class="input-group"><label>Olhos</label><input type="text" id="olhos" class="req"></div>
+                    </div>
+                    <button class="btn-registrar" onclick="salvarCard('card-fisico', 'fisico')">Próxima Etapa</button>
+                </div>
+
+                <div class="card" id="card-mob" style="display:none;">
+                    <h2>🚦 MOBILIDADE & FINALIZAÇÃO</h2>
+                    <div class="input-group"><label>Bairro</label><input type="text" id="bairro" class="req"></div>
+                    <div class="check-container" id="g-cnh">
+                        <label>Possui CNH?</label>
+                        <div class="check-row">
+                            <div class="btn-check" id="cnh-sim" onclick="setCheck('g-cnh', this, 'sim')">SIM</div>
+                            <div class="btn-check" id="cnh-nao" onclick="setCheck('g-cnh', this, 'nao')">NÃO</div>
+                        </div>
+                    </div>
+                    <button class="btn-registrar" onclick="enviarFinal()">FINALIZAR FICHA ARP</button>
                 </div>
             </div>
+
+            <div class="container view-card" id="view-card"></div>
         </main>
     </div>
 
@@ -105,51 +161,97 @@
         let db = {};
         const SERVIDOR = "https://codex-darc.onrender.com";
 
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function limparErro(el) { el.classList.remove('campo-erro'); }
+
+        function setCheck(groupId, el, tipo) {
+            const group = document.getElementById(groupId);
+            group.querySelectorAll('.btn-check').forEach(b => b.classList.remove('sim-active', 'nao-active', 'escolhido'));
+            el.classList.add('escolhido', tipo === 'sim' ? 'sim-active' : 'nao-active');
+            db[groupId] = tipo;
+        }
+
         function salvarCard(cardId, secao) {
             const card = document.getElementById(cardId);
+            const inputs = card.querySelectorAll('input.req');
+            let erro = false;
+
+            inputs.forEach(i => { if(i.value.trim() === "") { i.classList.add('campo-erro'); erro = true; } });
+            if(erro) return;
+
             db[secao] = {};
             card.querySelectorAll('input').forEach(i => { db[secao][i.id] = i.value; });
+            
             card.style.display = 'none';
-            document.getElementById('card-final').style.display = 'block';
+            const proximo = cardId === 'card-ident' ? 'card-fisico' : 'card-mob';
+            document.getElementById(proximo).style.display = 'block';
+            
+            showParabens();
+            gerarAba(secao, document.getElementById('nome').value);
         }
 
         async function enviarFinal() {
             const loading = document.getElementById('loading-overlay');
             const statusTexto = document.getElementById('status-texto');
+            
+            // Coleta dados do último card antes de enviar
+            const cardMob = document.getElementById('card-mob');
+            db['final'] = {};
+            cardMob.querySelectorAll('input').forEach(i => { db['final'][i.id] = i.value; });
+
             loading.style.display = 'flex';
+            const nomeAgente = db.ident?.nome || "Agente";
             
-            const nomeAgente = db.ident?.nome || "Agente Desconhecido";
-            
-            // Formatando os dados para o seu painel
-            const conteudoFormatado = `NOVA FICHA ARP\nAgente: ${nomeAgente}\nCodinome: ${db.ident?.cod}\nDados: ${JSON.stringify(db)}`;
+            // Formatação do conteúdo para o painel
+            const resumo = `FICHA COMPLETA ARP\nAgente: ${nomeAgente}\nCodinome: ${db.ident?.cod}\nLocal: ${db.final?.bairro}\nJSON: ${JSON.stringify(db)}`;
 
             let sucesso = false;
             let tentativas = 0;
 
-            while (!sucesso && tentativas < 10) {
+            while (!sucesso && tentativas < 15) {
                 tentativas++;
-                statusTexto.innerText = `TENTATIVA DE CONEXÃO ${tentativas}...`;
+                statusTexto.innerText = `CONECTANDO AO CODEX (Tentativa ${tentativas})...`;
                 
                 try {
                     const res = await fetch(`${SERVIDOR}/registrar`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ nome: nomeAgente, conteudo: conteudoFormatado })
+                        body: JSON.stringify({ nome: nomeAgente, conteudo: resumo })
                     });
 
                     if (res.ok) {
                         sucesso = true;
-                        alert("✅ FICHA ARQUIVADA COM SUCESSO!");
+                        alert("✅ SUCESSO! DADOS ENVIADOS AO CODEX CENTRAL.");
                         location.reload();
                     }
                 } catch (err) {
-                    await new Promise(r => setTimeout(r, 5000)); // Espera 5 segundos para o servidor ligar
+                    await new Promise(r => setTimeout(r, 4000));
                 }
             }
+
             if(!sucesso) {
-                alert("❌ Erro ao conectar. Tente novamente em 1 minuto.");
+                alert("❌ O servidor demorou muito. Tente clicar em Enviar novamente.");
                 loading.style.display = 'none';
             }
+        }
+
+        function gerarAba(secao, nome) {
+            const lista = document.getElementById('lista-abas');
+            const item = document.createElement('div');
+            item.className = 'aba-item';
+            item.innerHTML = `<div class="aba-info">📂 ${secao.toUpperCase()} OK</div>`;
+            lista.appendChild(item);
+        }
+
+        function showParabens() {
+            const msg = document.getElementById('msg-parabens');
+            msg.style.display = 'block';
+            msg.style.opacity = '1';
+            setTimeout(() => { msg.style.opacity = '0'; setTimeout(() => msg.style.display = 'none', 1000); }, 2000);
         }
     </script>
 </body>

@@ -1,36 +1,67 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAINEL DE DADOS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAINEL DE CONTROLE - CODEX</title>
     <style>
-        body { background: #000; color: #00ff41; font-family: monospace; padding: 20px; }
-        .registro { border: 1px solid #00ff41; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
-        button { background: #00ff41; border: none; padding: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 20px; }
+        body { background-color: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; }
+        .ficha { border: 1px solid #0f0; padding: 15px; margin-bottom: 10px; border-radius: 5px; background: #050505; }
+        .header { border-bottom: 2px solid #0f0; margin-bottom: 20px; padding-bottom: 10px; }
+        button { background: #0f0; color: #000; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 20px; }
+        .meta { color: #888; font-size: 0.8em; }
     </style>
 </head>
 <body>
-    <h2>📡 CENTRAL DE DADOS</h2>
-    <button onclick="carregar()">ATUALIZAR LISTA</button>
-    <div id="dados">Clique no botão para carregar...</div>
+    <div class="header">
+        <h1>📡 CENTRAL DE DADOS CODEX</h1>
+        <p>Status: <span id="status">CONECTANDO...</span></p>
+    </div>
+
+    <button onclick="baixarDados()">ATUALIZAR LISTA DE AGENTES</button>
+    <div id="lista-fichas"></div>
+
     <script>
-        async function carregar() {
-            const lista = document.getElementById('dados');
-            lista.innerHTML = "Buscando...";
+        const servidor = 'https://codex-darc.onrender.com';
+
+        async function baixarDados() {
+            const lista = document.getElementById('lista-fichas');
+            const status = document.getElementById('status');
+            
             try {
-                const res = await fetch('/ver');
-                const data = await res.json();
-                lista.innerHTML = data.length === 0 ? "Nenhum dado recebido ainda." : "";
-                data.forEach(reg => {
-                    lista.innerHTML += `<div class="registro">
-                        <strong>AGENTE:</strong> ${reg.nome}<br>
-                        <strong>DATA:</strong> ${new Date(reg.data).toLocaleString()}<br>
-                        <hr><pre>${JSON.stringify(reg.conteudo, null, 2)}</pre>
-                    </div>`;
+                const resposta = await fetch(`${servidor}/dados`);
+                const fichas = await resposta.json();
+                
+                status.innerText = "ONLINE";
+                status.style.color = "#0f0";
+                lista.innerHTML = '';
+
+                if (fichas.length === 0) {
+                    lista.innerHTML = '<p>Nenhum dado recebido ainda...</p>';
+                    return;
+                }
+
+                fichas.reverse().forEach(ficha => {
+                    const div = document.createElement('div');
+                    div.className = 'ficha';
+                    div.innerHTML = `
+                        <div class="meta">ID: ${ficha.id} | Recebido em: ${ficha.hora}</div>
+                        <h3>Agente: ${ficha.agente}</h3>
+                        <pre>${ficha.dados}</pre>
+                        <hr style="border: 0.5px solid #222">
+                    `;
+                    lista.appendChild(div);
                 });
-            } catch (e) { lista.innerHTML = "Erro ao conectar com o servidor."; }
+            } catch (erro) {
+                status.innerText = "ERRO DE CONEXÃO";
+                status.style.color = "red";
+                console.error(erro);
+            }
         }
-        window.onload = carregar;
+
+        // Atualiza automaticamente a cada 10 segundos
+        setInterval(baixarDados, 10000);
+        baixarDados();
     </script>
 </body>
 </html>

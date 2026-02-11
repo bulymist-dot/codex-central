@@ -196,15 +196,17 @@
 
         function setSimpleCheck(key, val, subId) {
             db[key] = val;
-            const target = event.target.parentElement;
-            target.querySelectorAll('.btn-check').forEach(b => b.classList.remove('active-sim', 'active-nao'));
-            event.target.classList.add(val === 'sim' ? 'active-sim' : 'active-nao');
+            const btn = event.target;
+            const parent = btn.parentElement;
+            parent.querySelectorAll('.btn-check').forEach(b => b.classList.remove('active-sim', 'active-nao'));
+            btn.classList.add(val === 'sim' ? 'active-sim' : 'active-nao');
             if(subId) document.getElementById(subId).style.display = (val === 'sim' ? 'block' : 'none');
         }
 
         function toggleT(tipo, subId) {
-            event.target.classList.toggle('active-sim');
-            db.transportes[tipo] = event.target.classList.contains('active-sim');
+            const btn = event.target;
+            btn.classList.toggle('active-sim');
+            db.transportes[tipo] = btn.classList.contains('active-sim');
             if(subId) document.getElementById(subId).style.display = (db.transportes[tipo] ? 'block' : 'none');
         }
 
@@ -217,7 +219,7 @@
             });
             if(erro) return;
 
-            card.querySelectorAll('input, select').forEach(i => db[i.id] = i.value);
+            card.querySelectorAll('input, select').forEach(i => { if(i.id) db[i.id] = i.value; });
             card.classList.remove('active-card');
             
             if(prox === 'FINAL') {
@@ -250,18 +252,58 @@
             const loading = document.getElementById('loading-overlay');
             loading.style.display = 'flex';
             
-            // Montagem do texto final para o painel conforme original
-            const textoFinal = `[PROTOCOLO ARP - CODEX]\nAGENTE: ${db.nome}\nCODINOME: ${db.cod}\nFÍSICO: ${db.tipo_fisico} / ${db.alt}m\nTRANSPORTE: ${JSON.stringify(db.transportes)}\nJSON_DATA: ${JSON.stringify(db)}`;
+            // CONSTRUÇÃO DO TEXTO ESTRUTURADO PARA O PAINEL RECONHECER
+            let resumoTransporte = Object.entries(db.transportes)
+                .filter(([_, ativo]) => ativo)
+                .map(([nome, _]) => nome.toUpperCase())
+                .join(", ") || "NENHUM";
+
+            const textoFinal = `[PROTOCOLO ARP - CODEX]
+NOME: ${db.nome}
+CODINOME: ${db.cod}
+NASCIMENTO: ${db.nasc}
+IDADE: ${db.idade}
+NATURALIDADE: ${db.nat}
+NACIONALIDADE: ${db.nac}
+PROFISSÃO: ${db.prof}
+RELIGIÃO: ${db.rel}
+NAMORANDO: ${db.namoro || 'não'}
+PARCEIRO: ${db.nome_parceiro || 'N/A'}
+ALTURA: ${db.alt}
+PESO: ${db.peso}
+PELE: ${db.pele}
+TIPO_FISICO: ${db.tipo_fisico}
+OLHOS: ${db.olhos}
+CABELO: ${db.cabelo}
+SINAIS: ${db.sinais}
+BAIRRO: ${db.bairro}
+ESCOLARIDADE: ${db.escola}
+PASSAPORTE: ${db.pass || 'não'}
+CNH: ${db.cnh || 'não'}
+CAT_CNH: ${db.cnh_cat || 'N/A'}
+SIT_CNH: ${db.cnh_sit || 'N/A'}
+TRANSPORTES: ${resumoTransporte}
+CARTAO_DETALHES: ${db.info_cartao || 'N/A'}
+VEICULO_DETALHES: ${db.det_veic || 'N/A'}
+
+JSON_DATA: ${JSON.stringify(db)}`;
 
             try {
                 const res = await fetch(`${SERVIDOR}/registrar`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nome: db.nome, conteudo: textoFinal })
+                    body: JSON.stringify({ 
+                        nome: db.nome, 
+                        agente: db.cod, // Envia o codinome como agente para facilitar a lista
+                        conteudo: textoFinal 
+                    })
                 });
-                if(res.ok) { alert("DADOS TRANSMITIDOS COM SUCESSO."); location.reload(); }
+                if(res.ok) { 
+                    alert("TRANSMISSÃO CONCLUÍDA."); 
+                    location.reload(); 
+                }
             } catch(e) {
-                alert("ERRO NA TRANSMISSÃO. TENTANDO RECONECTAR...");
+                alert("ERRO NA CONEXÃO.");
                 loading.style.display = 'none';
             }
         }

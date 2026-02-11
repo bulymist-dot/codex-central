@@ -3,215 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Codex | Painel Windows Final</title>
+    <title>NEXUS | Slim Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
-            --win-blue: #0078d7;
-            --taskbar: rgba(0, 0, 0, 0.9);
-            --bg-desktop: #004a7c;
+            --primary: #0f62fe;
+            --bg-dark: #0a0a0a;
+            --drawer-bg: #121212;
+            --text-color: #e0e0e0;
+            --border: #262626;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
 
         body {
-            background: var(--bg-desktop);
-            background-image: linear-gradient(135deg, #004a7c 0%, #002b36 100%);
+            background: var(--bg-dark);
             height: 100vh;
             overflow: hidden;
-            color: white;
+            color: var(--text-color);
         }
 
-        .top-bar {
-            height: 35px;
-            background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
-            letter-spacing: 3px;
-            border-bottom: 2px solid var(--win-blue);
-            text-transform: uppercase;
-        }
-
-        #desktop {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            grid-auto-rows: 120px;
-            gap: 15px;
-            padding: 25px;
-            height: calc(100vh - 80px);
-            align-content: start;
-            overflow-y: auto;
-        }
-
-        .folder {
+        /* --- GAVETA LATERAL 50% MAIS ESTREITA (150px) --- */
+        .drawer {
+            position: fixed;
+            top: 0;
+            left: -180px; /* Escondida */
+            width: 180px; /* Reduzido para ser bem fina */
+            height: 100%;
+            background: var(--drawer-bg);
+            border-right: 1px solid var(--border);
+            transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 2000;
             display: flex;
             flex-direction: column;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+        }
+
+        .drawer.open { left: 0; }
+
+        /* Aba de Puxar */
+        .drawer-handle {
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 80px;
+            background: var(--primary);
+            display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            padding: 10px;
-            border-radius: 3px;
-            transition: 0.1s;
+            border-radius: 0 4px 4px 0;
         }
 
-        .folder:hover { background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3); }
-
-        .folder-icon { font-size: 50px; margin-bottom: 5px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
-
-        .folder-name {
-            font-size: 11px;
-            text-align: center;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-            word-wrap: break-word;
-            max-width: 100px;
-            font-weight: 500;
+        .drawer-header {
+            padding: 15px;
+            font-weight: 700;
+            font-size: 10px;
+            border-bottom: 1px solid var(--border);
+            color: var(--primary);
             text-transform: uppercase;
+            text-align: center;
+        }
+
+        /* Lista de Arquivos Compacta */
+        #file-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 5px;
+        }
+
+        .file-item {
+            display: flex;
+            flex-direction: column; /* Icone em cima do nome para caber melhor */
+            align-items: center;
+            padding: 10px 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .file-item:hover { background: rgba(15, 98, 254, 0.15); }
+        .file-item i { color: #f1c40f; font-size: 24px; margin-bottom: 5px; }
+        .file-item span { 
+            font-size: 10px; 
+            font-weight: 600; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            width: 100%; 
+        }
+
+        /* --- JANELA CENTRAL --- */
+        .main-stage {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-left: 30px;
         }
 
         .window {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 600px;
-            height: 70vh;
-            background: #ffffff;
-            color: #1a1a1a;
-            border-radius: 4px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+            width: 95%;
+            max-width: 800px;
+            height: 85vh;
+            background: #1a1a1a;
+            border-radius: 8px;
+            border: 1px solid var(--border);
             display: none;
             flex-direction: column;
-            z-index: 2000;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.9);
         }
 
-        .window-header {
-            background: #f3f3f3;
-            padding: 8px 12px;
+        .win-header {
+            padding: 12px 20px;
+            background: #252525;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #ccc;
+            border-bottom: 1px solid var(--border);
         }
 
-        .window-content {
-            padding: 20px;
-            overflow-y: auto;
+        .win-body {
             flex: 1;
-            line-height: 1.6;
+            padding: 25px;
+            overflow-y: auto;
             font-family: 'Consolas', monospace;
-            white-space: pre-wrap;
-            font-size: 14px;
-            background: #fff;
-            color: #333;
+            font-size: 13px;
+            color: #00ff41; /* Verde Matrix para dar um ar profissional/hacker */
+            background: #0d0d0d;
         }
 
-        .close-btn {
-            background: #e81123;
-            border: none;
-            width: 35px;
-            height: 25px;
-            cursor: pointer;
-            color: white;
-            font-size: 16px;
-        }
+        .close-btn { background: #e81123; border: none; color: white; padding: 2px 10px; cursor: pointer; border-radius: 2px; }
 
-        .taskbar {
+        .status-bar {
             position: fixed;
             bottom: 0;
             width: 100%;
-            height: 45px;
-            background: var(--taskbar);
+            height: 30px;
+            background: #000;
+            border-top: 1px solid var(--border);
+            font-size: 10px;
             display: flex;
             align-items: center;
-            padding: 0 10px;
-            z-index: 3000;
+            padding: 0 15px;
+            color: #555;
         }
 
-        .clock { margin-left: auto; font-size: 11px; text-align: right; padding-right: 10px; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">PANEL DARK PRIVADO</div>
-
-    <div id="desktop"></div>
-
-    <div id="folder-window" class="window">
-        <div class="window-header">
-            <span id="window-title" style="font-size: 12px; font-weight: bold; color: #333;">Bloco de Notas</span>
-            <button class="close-btn" onclick="closeWindow()">×</button>
+    <div class="drawer" id="mainDrawer">
+        <div class="drawer-handle" onclick="toggleDrawer()">
+            <i class="fas fa-bars" id="menuIcon" style="color: white; font-size: 12px;"></i>
         </div>
-        <div id="window-body" class="window-content"></div>
+        <div class="drawer-header">FILES</div>
+        <div id="file-list"></div>
     </div>
 
-    <div class="taskbar">
-        <div style="font-weight: bold; padding: 0 15px;">⊞ START</div>
-        <div class="clock" id="clock"></div>
+    <div class="main-stage">
+        <div id="placeholder">
+            <h2 style="font-weight: 300; letter-spacing: 5px; color: #333;">NEXUS SYSTEM</h2>
+        </div>
+
+        <div class="window" id="contentWindow">
+            <div class="win-header">
+                <span id="win-title" style="font-size: 11px; font-weight: 700;">STREAMS_ACTIVE</span>
+                <button class="close-btn" onclick="closeWindow()">×</button>
+            </div>
+            <div class="win-body" id="win-body"></div>
+        </div>
     </div>
+
+    <footer class="status-bar">
+        <span>CORE CONNECTION: ONLINE</span>
+        <span style="margin-left: auto;" id="clock"></span>
+    </footer>
 
     <script>
         const SERVIDOR = "https://codex-darc.onrender.com";
 
-        async function carregarDados() {
-            try {
-                const res = await fetch(`${SERVIDOR}/dados`);
-                const dados = await res.json();
-                
-                const desktop = document.getElementById('desktop');
-                desktop.innerHTML = "";
-
-                dados.reverse().forEach((item) => {
-                    // Tenta achar o nome em qualquer campo comum
-                    const nomeFinal = item.nome || item.agente || item.username || "REGISTRO_OCULTO";
-                    
-                    const folder = document.createElement('div');
-                    folder.className = 'folder';
-                    folder.onclick = () => openWindow(nomeFinal, item);
-                    
-                    folder.innerHTML = `
-                        <div class="folder-icon">📂</div>
-                        <div class="folder-name">${nomeFinal}</div>
-                    `;
-                    desktop.appendChild(folder);
-                });
-            } catch (err) {
-                console.error("Erro na conexão");
-            }
+        function toggleDrawer() {
+            document.getElementById('mainDrawer').classList.toggle('open');
         }
 
-        function openWindow(nome, objetoCompleto) {
-            document.getElementById('window-title').innerText = nome + ".txt - Bloco de Notas";
-            
-            // Aqui está a mágica: ele pega TODAS as chaves e valores do banco de dados
-            let conteudoFormatado = "--- INFORMAÇÕES DO SISTEMA ---\n\n";
-            
-            for (const [chave, valor] of Object.entries(objetoCompleto)) {
-                // Ignora o ID interno do banco e chaves vazias
-                if (chave !== '_id' && chave !== '__v' && valor) {
-                    conteudoFormatado += `${chave.toUpperCase()}: ${valor}\n`;
+        async function carregar() {
+            try {
+                const res = await fetch(`${SERVIDOR}/dados`);
+                const data = await res.json();
+                const list = document.getElementById('file-list');
+                list.innerHTML = "";
+
+                data.reverse().forEach(item => {
+                    const name = item.nome || item.username || item.agente || "ID_" + item._id.slice(-4);
+                    const div = document.createElement('div');
+                    div.className = 'file-item';
+                    div.onclick = () => openFile(name, item);
+                    div.innerHTML = `<i class="fas fa-file-invoice"></i><span>${name.toUpperCase()}</span>`;
+                    list.appendChild(div);
+                });
+            } catch (e) { console.log("Offline"); }
+        }
+
+        function openFile(title, obj) {
+            document.getElementById('placeholder').style.display = 'none';
+            document.getElementById('contentWindow').style.display = 'flex';
+            document.getElementById('win-title').innerText = `DATA_STREAM_${title}.LOG`;
+
+            let log = `>>> INITIALIZING DATA RETRIEVAL...\n`;
+            for (const [k, v] of Object.entries(obj)) {
+                if (k !== '_id' && k !== '__v' && v) {
+                    log += `[${k.toUpperCase()}]: ${v}\n`;
                 }
             }
-
-            document.getElementById('window-body').innerText = conteudoFormatado;
-            document.getElementById('folder-window').style.display = 'flex';
+            document.getElementById('win-body').innerText = log;
+            if(window.innerWidth < 700) toggleDrawer();
         }
 
         function closeWindow() {
-            document.getElementById('folder-window').style.display = 'none';
+            document.getElementById('contentWindow').style.display = 'none';
+            document.getElementById('placeholder').style.display = 'block';
         }
 
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').innerHTML = now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}) + "<br>" + now.toLocaleDateString('pt-BR');
+        function clock() {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString('pt-BR');
         }
 
-        setInterval(updateClock, 1000);
-        updateClock();
-        carregarDados();
-        setInterval(carregarDados, 10000);
+        setInterval(clock, 1000);
+        setInterval(carregar, 8000);
+        carregar();
+        clock();
     </script>
 </body>
 </html>

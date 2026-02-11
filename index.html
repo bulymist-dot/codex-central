@@ -151,14 +151,14 @@
                     <div class="row">
                         <div class="check-container" style="flex:1"><label>Passaporte?</label>
                             <div class="check-row">
-                                <div class="btn-check" onclick="setSimpleCheck('pass', 'sim')">SIM</div>
-                                <div class="btn-check" onclick="setSimpleCheck('pass', 'nao')">NÃO</div>
+                                <div class="btn-check" id="pass-s" onclick="setSimpleCheck('pass', 'sim')">SIM</div>
+                                <div class="btn-check" id="pass-n" onclick="setSimpleCheck('pass', 'nao')">NÃO</div>
                             </div>
                         </div>
                         <div class="check-container" style="flex:1"><label>CNH?</label>
                             <div class="check-row">
-                                <div class="btn-check" onclick="setSimpleCheck('cnh', 'sim', 'sub-cnh')">SIM</div>
-                                <div class="btn-check" onclick="setSimpleCheck('cnh', 'nao', 'sub-cnh')">NÃO</div>
+                                <div class="btn-check" id="cnh-s" onclick="setSimpleCheck('cnh', 'sim', 'sub-cnh')">SIM</div>
+                                <div class="btn-check" id="cnh-n" onclick="setSimpleCheck('cnh', 'nao', 'sub-cnh')">NÃO</div>
                             </div>
                         </div>
                     </div>
@@ -213,13 +213,20 @@
         function proximo(atual, prox, label) {
             const card = document.getElementById(atual);
             let erro = false;
+            
+            // Valida apenas os obrigatórios (.req)
             card.querySelectorAll('input.req').forEach(i => {
                 if(!i.value.trim()) { i.classList.add('campo-erro'); erro = true; }
-                else { i.classList.remove('campo-erro'); db[i.id] = i.value; }
+                else { i.classList.remove('campo-erro'); }
             });
+            
             if(erro) return;
 
-            card.querySelectorAll('input, select').forEach(i => { if(i.id) db[i.id] = i.value; });
+            // Captura TODOS os inputs e selects do card atual, sendo obrigatórios ou não
+            card.querySelectorAll('input, select').forEach(i => { 
+                if(i.id) db[i.id] = i.value; 
+            });
+
             card.classList.remove('active-card');
             
             if(prox === 'FINAL') {
@@ -252,34 +259,33 @@
             const loading = document.getElementById('loading-overlay');
             loading.style.display = 'flex';
             
-            // CONSTRUÇÃO DO TEXTO ESTRUTURADO PARA O PAINEL RECONHECER
             let resumoTransporte = Object.entries(db.transportes)
                 .filter(([_, ativo]) => ativo)
                 .map(([nome, _]) => nome.toUpperCase())
                 .join(", ") || "NENHUM";
 
             const textoFinal = `[PROTOCOLO ARP - CODEX]
-NOME: ${db.nome}
-CODINOME: ${db.cod}
-NASCIMENTO: ${db.nasc}
-IDADE: ${db.idade}
-NATURALIDADE: ${db.nat}
-NACIONALIDADE: ${db.nac}
-PROFISSÃO: ${db.prof}
-RELIGIÃO: ${db.rel}
-NAMORANDO: ${db.namoro || 'não'}
+NOME: ${db.nome || 'N/A'}
+CODINOME: ${db.cod || 'N/A'}
+NASCIMENTO: ${db.nasc || 'N/A'}
+IDADE: ${db.idade || 'N/A'}
+NATURALIDADE: ${db.nat || 'N/A'}
+NACIONALIDADE: ${db.nac || 'N/A'}
+PROFISSÃO: ${db.prof || 'N/A'}
+RELIGIÃO: ${db.rel || 'N/A'}
+NAMORANDO: ${db.namoro || 'nao'}
 PARCEIRO: ${db.nome_parceiro || 'N/A'}
-ALTURA: ${db.alt}
-PESO: ${db.peso}
-PELE: ${db.pele}
-TIPO_FISICO: ${db.tipo_fisico}
-OLHOS: ${db.olhos}
-CABELO: ${db.cabelo}
-SINAIS: ${db.sinais}
-BAIRRO: ${db.bairro}
-ESCOLARIDADE: ${db.escola}
-PASSAPORTE: ${db.pass || 'não'}
-CNH: ${db.cnh || 'não'}
+ALTURA: ${db.alt || 'N/A'}
+PESO: ${db.peso || 'N/A'}
+PELE: ${db.pele || 'N/A'}
+TIPO_FISICO: ${db.tipo_fisico || 'N/A'}
+OLHOS: ${db.olhos || 'N/A'}
+CABELO: ${db.cabelo || 'N/A'}
+SINAIS: ${db.sinais || 'N/A'}
+BAIRRO: ${db.bairro || 'N/A'}
+ESCOLARIDADE: ${db.escola || 'N/A'}
+PASSAPORTE: ${db.pass || 'nao'}
+CNH: ${db.cnh || 'nao'}
 CAT_CNH: ${db.cnh_cat || 'N/A'}
 SIT_CNH: ${db.cnh_sit || 'N/A'}
 TRANSPORTES: ${resumoTransporte}
@@ -294,7 +300,7 @@ JSON_DATA: ${JSON.stringify(db)}`;
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         nome: db.nome, 
-                        agente: db.cod, // Envia o codinome como agente para facilitar a lista
+                        agente: db.cod, // Usa o Codinome como identificador principal
                         conteudo: textoFinal 
                     })
                 });

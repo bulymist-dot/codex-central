@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -9,205 +10,84 @@
     
     <style>
         :root {
-            --primary: #00d4ff;
-            --primary-dark: #0088cc;
-            --bg-page: #f0f4f8;
-            --bg-white: #ffffff;
-            --text-main: #2d3748;
-            --text-label: #718096;
-            --border: #e2e8f0;
+            --primary: #00d4ff; --primary-dark: #0088cc;
+            --bg-page: #f0f4f8; --bg-white: #ffffff;
+            --text-main: #2d3748; --text-label: #718096; --border: #e2e8f0;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg-page); height: 100vh; overflow: hidden; display: flex; color: var(--text-main); }
 
-        body {
-            background: var(--bg-page);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            color: var(--text-main);
-        }
-
-        /* --- SIDEBAR (GAVETA 50% SLIM) --- */
+        /* SIDEBAR */
         .drawer {
-            position: fixed;
-            top: 0;
-            left: -180px;
-            width: 180px;
-            height: 100%;
-            background: var(--bg-white);
-            border-right: 2px solid var(--primary);
-            transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 2000;
+            position: fixed; top: 0; left: -180px; width: 180px; height: 100%;
+            background: var(--bg-white); border-right: 2px solid var(--primary);
+            transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2000;
             box-shadow: 10px 0 30px rgba(0,0,0,0.05);
         }
-
         .drawer.open { left: 0; }
-
         .drawer-handle {
-            position: absolute;
-            right: -35px;
-            top: 40px;
-            width: 35px;
-            height: 70px;
-            background: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border-radius: 0 10px 10px 0;
-            color: white;
+            position: absolute; right: -35px; top: 40px; width: 35px; height: 70px;
+            background: var(--primary); display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border-radius: 0 10px 10px 0; color: white;
             box-shadow: 4px 0 10px rgba(0, 212, 255, 0.3);
         }
-
         .drawer-header {
-            padding: 25px 15px;
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--primary-dark);
-            border-bottom: 1px solid var(--border);
-            text-align: center;
+            padding: 25px 15px; font-size: 10px; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 2px; color: var(--primary-dark); border-bottom: 1px solid var(--border); text-align: center;
         }
-
-        #file-list {
-            padding: 10px;
-            overflow-y: auto;
-            height: calc(100% - 70px);
-        }
-
+        #file-list { padding: 10px; overflow-y: auto; height: calc(100% - 70px); }
         .file-item {
-            padding: 15px 10px;
-            margin-bottom: 10px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            border: 1px solid transparent;
+            padding: 15px 10px; margin-bottom: 10px; border-radius: 12px; cursor: pointer;
+            transition: 0.3s; display: flex; flex-direction: column; align-items: center;
+            text-align: center; border: 1px solid transparent;
         }
-
-        .file-item:hover {
-            background: #f0fbff;
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-
+        .file-item:hover { background: #f0fbff; border-color: var(--primary); transform: translateY(-2px); }
         .file-item i { color: var(--primary); font-size: 24px; margin-bottom: 8px; }
         .file-item span { font-size: 10px; font-weight: 700; text-transform: uppercase; }
 
-        /* --- ÁREA DO RELATÓRIO (PDF STYLE) --- */
-        .main-content {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
+        /* ÁREA DO RELATÓRIO */
+        .main-content { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .report-card {
-            width: 100%;
-            max-width: 800px;
-            height: 90vh;
-            background: var(--bg-white);
-            border-radius: 20px;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.08);
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            animation: fadeIn 0.4s ease;
+            width: 100%; max-width: 800px; height: 90vh; background: var(--bg-white);
+            border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.08);
+            display: none; flex-direction: column; overflow: hidden;
+            border: 1px solid var(--border); animation: fadeIn 0.4s ease;
         }
-
         .report-header {
-            padding: 20px 30px;
-            background: #f8fafc;
-            border-bottom: 2px solid var(--primary);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 20px 30px; background: #f8fafc; border-bottom: 2px solid var(--primary);
+            display: flex; justify-content: space-between; align-items: center;
         }
+        .report-body { flex: 1; padding: 30px 40px; overflow-y: auto; }
 
-        .report-body {
-            flex: 1;
-            padding: 30px 40px;
-            overflow-y: auto;
-        }
-
-        /* --- ESTILOS DE DADOS ORGANIZADOS --- */
+        /* DADOS */
         .section-header {
-            background: #f1f5f9;
-            padding: 10px 15px;
-            border-radius: 6px;
-            margin: 25px 0 15px 0;
-            font-size: 11px;
-            font-weight: 800;
-            color: var(--primary-dark);
-            border-left: 4px solid var(--primary);
-            text-transform: uppercase;
+            background: #f1f5f9; padding: 10px 15px; border-radius: 6px;
+            margin: 25px 0 15px 0; font-size: 11px; font-weight: 800;
+            color: var(--primary-dark); border-left: 4px solid var(--primary); text-transform: uppercase;
         }
-
-        .info-card {
-            background: #fff;
-            border: 1px solid #edf2f7;
-            border-radius: 10px;
-            padding: 5px 15px;
-            margin-bottom: 15px;
-        }
-
-        .data-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #f7fafc;
-        }
-
+        .info-card { background: #fff; border: 1px solid #edf2f7; border-radius: 10px; padding: 5px 15px; margin-bottom: 15px; }
+        .data-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f7fafc; }
         .data-row:last-child { border: none; }
-
-        .label-tech {
-            font-size: 10px;
-            font-weight: 800;
-            color: var(--text-label);
-            text-transform: uppercase;
-        }
-
-        .value-tech {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-main);
-            text-align: right;
-            max-width: 70%;
-            word-break: break-word;
-        }
+        .label-tech { font-size: 10px; font-weight: 800; color: var(--text-label); text-transform: uppercase; }
+        .value-tech { font-size: 13px; font-weight: 600; color: var(--text-main); text-align: right; max-width: 70%; word-break: break-word; }
 
         .close-btn {
-            background: #fee2e2; border: none; color: #ef4444;
-            width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; font-size: 18px;
+            background: #fee2e2; border: none; color: #ef4444; width: 32px; height: 32px;
+            border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px;
         }
-
         #placeholder { text-align: center; opacity: 0.4; }
-
         .status-bar {
-            position: fixed; bottom: 0; width: 100%; height: 35px;
-            background: white; border-top: 1px solid var(--border);
-            display: flex; align-items: center; padding: 0 20px;
+            position: fixed; bottom: 0; width: 100%; height: 35px; background: white;
+            border-top: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px;
             font-size: 10px; font-weight: 800; color: var(--text-label);
         }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
     <div class="drawer" id="sidebar">
-        <div class="drawer-handle" onclick="toggleSidebar()">
-            <i class="fas fa-network-wired"></i>
-        </div>
+        <div class="drawer-handle" onclick="toggleSidebar()"><i class="fas fa-network-wired"></i></div>
         <div class="drawer-header">Registros Ativos</div>
         <div id="file-list"></div>
     </div>
@@ -221,9 +101,7 @@
 
         <div class="report-card" id="reportCard">
             <header class="report-header">
-                <div style="font-weight: 800; font-size: 13px;">
-                    <i class="fas fa-file-invoice"></i> DATA_EXTRACTION_REPORT
-                </div>
+                <div style="font-weight: 800; font-size: 13px;"><i class="fas fa-file-invoice"></i> DATA_EXTRACTION_REPORT</div>
                 <button class="close-btn" onclick="closeReport()">&times;</button>
             </header>
             <div class="report-body" id="reportContent"></div>
@@ -246,9 +124,8 @@
                 const data = await r.json();
                 const list = document.getElementById('file-list');
                 list.innerHTML = "";
-
                 data.reverse().forEach(item => {
-                    const label = item.nome || item.username || item.agente || "ID_" + item._id.slice(-4);
+                    const label = item.agente || item.nome || "REGISTRO";
                     const div = document.createElement('div');
                     div.className = 'file-item';
                     div.onclick = () => renderParser(item);
@@ -262,54 +139,45 @@
             document.getElementById('placeholder').style.display = 'none';
             document.getElementById('reportCard').style.display = 'flex';
             const container = document.getElementById('reportContent');
-            container.innerHTML = "";
-
-            // 1. Identificação Fixa (Topo)
+            
+            // Cabeçalho de Identificação
             let html = `
                 <div class="section-header">Identificação do Registro</div>
                 <div class="info-card">
-                    <div class="data-row"><span class="label-tech">Agente Principal</span><span class="value-tech">${user.agente || user.nome || 'N/A'}</span></div>
-                    <div class="data-row"><span class="label-tech">Data/Hora</span><span class="value-tech">${user.hora || 'Sincronizando...'}</span></div>
+                    <div class="data-row"><span class="label-tech">Codinome / Agente</span><span class="value-tech">${user.agente || 'N/A'}</span></div>
+                    <div class="data-row"><span class="label-tech">Hora da Sincronia</span><span class="value-tech">${user.hora || '---'}</span></div>
                 </div>
             `;
 
-            let details = "";
+            // Parser do Bloco de Conteúdo (Extrai os dados do texto corrido)
+            if (user.conteudo) {
+                const linhas = user.conteudo.split('\n');
+                let emDados = false;
+                let dadosHTML = `<div class="section-header">Dados do Protocolo ARP</div><div class="info-card">`;
 
-            // 2. Extração de Campos Dinâmicos (Organizando a bagunça)
-            Object.entries(user).forEach(([key, value]) => {
-                if (['__v', '_id', 'hora', 'nome', 'agente'].includes(key)) return;
+                linhas.forEach(linha => {
+                    // Só processa linhas que têm ":" e não são metadados (JSON_DATA ou colchetes)
+                    if (linha.includes(':') && !linha.includes('{') && !linha.includes('[PROTOCOLO')) {
+                        const partes = linha.split(':');
+                        const chave = partes[0].trim();
+                        const valor = partes.slice(1).join(':').trim();
 
-                // Se o dado for aquela string gigante com JSON dentro
-                if (typeof value === 'string' && value.includes('{')) {
-                    try {
-                        // Regex para pegar apenas o que está dentro das chaves {}
-                        const jsonMatch = value.match(/\{.*\}/);
-                        if (jsonMatch) {
-                            const parsed = JSON.parse(jsonMatch[0]);
-                            
-                            details += `<div class="section-header">${key.toUpperCase()} DETALHADO</div><div class="info-card">`;
-                            
-                            Object.entries(parsed).forEach(([sKey, sVal]) => {
-                                if (typeof sVal === 'object') {
-                                    Object.entries(sVal).forEach(([k, v]) => {
-                                        details += `<div class="data-row"><span class="label-tech">${k}</span><span class="value-tech">${v}</span></div>`;
-                                    });
-                                } else {
-                                    details += `<div class="data-row"><span class="label-tech">${sKey}</span><span class="value-tech">${sVal}</span></div>`;
-                                }
-                            });
-                            details += `</div>`;
+                        if (valor && valor !== 'N/A') {
+                            dadosHTML += `
+                                <div class="data-row">
+                                    <span class="label-tech">${chave}</span>
+                                    <span class="value-tech">${valor}</span>
+                                </div>`;
+                            emDados = true;
                         }
-                    } catch (e) {
-                        details += `<div class="section-header">${key}</div><div class="info-card"><div class="data-row"><span class="label-tech">INFO</span><span class="value-tech">${value}</span></div></div>`;
                     }
-                } else if (value && typeof value !== 'object') {
-                    // Dados simples
-                    details += `<div class="section-header">${key.replace(/_/g, ' ')}</div><div class="info-card"><div class="data-row"><span class="label-tech">DADO</span><span class="value-tech">${value}</span></div></div>`;
-                }
-            });
+                });
 
-            container.innerHTML = html + details;
+                dadosHTML += `</div>`;
+                if (emDados) html += dadosHTML;
+            }
+
+            container.innerHTML = html;
             if(window.innerWidth < 800) toggleSidebar();
         }
 
@@ -319,9 +187,8 @@
         }
 
         function clock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString('pt-BR'); }
-        
         setInterval(clock, 1000);
-        setInterval(fetchDatabase, 8000);
+        setInterval(fetchDatabase, 5000);
         fetchDatabase();
         clock();
     </script>

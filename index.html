@@ -3,162 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Codex D'ARC | ARP-PROTOCOL</title>
+    <title>Codex D'ARC | ARP-PROTOCOL v4.0</title>
     <style>
         :root {
-            --marinho: #0a192f;
-            --azul-claro: #00b4ff;
-            --azul-medio: #0077b6;
-            --branco: #ffffff;
-            --sucesso: #2ecc71;
-            --erro: #e74c3c;
-            --cinza: #e1e8ed;
+            --marinho: #0a192f; --azul-claro: #00b4ff; --azul-medio: #0077b6;
+            --branco: #ffffff; --sucesso: #2ecc71; --erro: #e74c3c;
+            --cinza: #e1e8ed; --ouro: #ffb800;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { background-color: #f0f4f8; height: 100vh; display: flex; overflow: hidden; }
 
+        /* SIDEBAR COMPACTA (170px) */
         .sidebar { 
-            position: fixed; top: 0; left: -340px; width: 340px; height: 100%; 
+            position: fixed; top: 0; left: -170px; width: 170px; height: 100%; 
             background: var(--marinho); transition: 0.4s; z-index: 1000; 
             border-right: 2px solid var(--azul-claro); color: white; overflow-y: auto;
         }
         .sidebar.open { left: 0; }
-        .sidebar-header { padding: 25px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        
-        .aba-item { 
-            padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); 
-            display: flex; flex-direction: column; gap: 8px;
-        }
-        .aba-info { font-size: 11px; text-transform: uppercase; color: var(--azul-claro); font-weight: bold; }
-        .aba-btns { display: flex; gap: 5px; }
-        .aba-mini-btn { flex: 1; padding: 6px; font-size: 9px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; }
-        .btn-ver { background: var(--azul-medio); color: white; }
-        .btn-edt { background: #555; color: white; }
+        .sidebar-header { padding: 15px 10px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .aba-item { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .aba-info { font-size: 9px; text-transform: uppercase; color: var(--azul-claro); font-weight: bold; margin-bottom: 5px; }
+        .btn-edt { width: 100%; padding: 5px; font-size: 8px; border: none; border-radius: 3px; cursor: pointer; background: var(--ouro); color: var(--marinho); font-weight: bold; text-transform: uppercase; }
 
         .main-content { flex: 1; display: flex; flex-direction: column; width: 100%; }
         header { background: var(--marinho); color: white; padding: 15px 25px; display: flex; align-items: center; justify-content: space-between; }
-        
         main { flex: 1; overflow-y: auto; padding: 20px; }
-        .container { max-width: 700px; margin: 0 auto; }
+        .container { max-width: 750px; margin: 0 auto; }
 
-        .card { background: var(--branco); border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 25px; border-left: 6px solid var(--marinho); position: relative; }
-        h2 { font-size: 13px; color: var(--marinho); margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .card { background: var(--branco); border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 25px; border-left: 6px solid var(--marinho); display: none; }
+        .active-card { display: block; }
+        h2 { font-size: 13px; color: var(--marinho); margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 5px; text-transform: uppercase; }
 
-        .input-group { margin-bottom: 20px; position: relative; }
+        .input-group { margin-bottom: 15px; }
         label { display: block; font-size: 10px; font-weight: bold; color: #555; margin-bottom: 5px; text-transform: uppercase; }
-        input[type="text"] { width: 100%; padding: 12px; border: 2px solid var(--cinza); border-radius: 6px; outline: none; font-size: 14px; }
+        input[type="text"], select { width: 100%; padding: 10px; border: 2px solid var(--cinza); border-radius: 6px; outline: none; font-size: 13px; }
         input.campo-erro { border-color: var(--erro) !important; }
 
-        .error-label { 
-            position: absolute; top: -18px; left: 0; background: var(--erro); 
-            color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; 
-            display: none; z-index: 5; font-weight: bold; 
-        }
-
-        .row { display: flex; gap: 10px; }
+        .row { display: flex; gap: 10px; margin-bottom: 10px; }
         .row > div { flex: 1; }
 
-        .check-container { margin-bottom: 15px; padding: 8px; border-radius: 8px; border: 2px solid transparent; }
-        .check-row { display: flex; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
-        .btn-check { flex: 1; min-width: 80px; background: #f8f9fa; border: 1px solid #ddd; padding: 10px; border-radius: 6px; cursor: pointer; text-align: center; font-size: 10px; font-weight: bold; }
-        .btn-check.sim-active { border-color: var(--sucesso); color: var(--sucesso); background: #effaf3; }
-        .btn-check.nao-active { border-color: var(--erro); color: var(--erro); background: #fff5f5; }
+        .sub-secao { background: #f1f5f9; padding: 15px; border-radius: 8px; margin-top: 10px; display: none; border: 1px solid #cbd5e1; }
 
-        .btn-registrar { width: 100%; padding: 15px; background: var(--marinho); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
+        .check-row { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
+        .btn-check { flex: 1; min-width: 70px; background: #fff; border: 1px solid #ddd; padding: 8px; border-radius: 6px; cursor: pointer; text-align: center; font-size: 9px; font-weight: bold; }
+        .btn-check.active-sim { border-color: var(--sucesso); color: var(--sucesso); background: #effaf3; }
+        .btn-check.active-nao { border-color: var(--erro); color: var(--erro); background: #fff5f5; }
 
-        #msg-parabens { display: none; text-align: center; padding: 60px 20px; transition: opacity 1s ease; }
-        .view-card { display: none; background: white; padding: 25px; border-radius: 12px; border: 2px solid var(--azul-claro); }
-
+        .btn-registrar { width: 100%; padding: 15px; background: var(--marinho); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
+        
+        #loading-overlay { position: fixed; inset: 0; background: rgba(10, 25, 47, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; color: var(--azul-claro); }
+        #sucesso-final { display: none; text-align: center; padding: 40px; }
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; z-index: 999; }
         .overlay.active { display: block; }
-        
-        #loading-overlay { 
-            position: fixed; inset: 0; background: rgba(10, 25, 47, 0.95); 
-            display: none; flex-direction: column; align-items: center; justify-content: center; 
-            z-index: 2000; color: var(--azul-claro); text-align: center; padding: 20px;
-        }
     </style>
 </head>
 <body>
 
     <div id="loading-overlay">
-        <div style="font-size: 40px; margin-bottom: 20px;">📡</div>
-        <h3 id="status-texto">SINCRONIZANDO COM O CODEX...</h3>
-        <p style="font-size: 12px; margin-top: 10px; color: white;">Aguarde enquanto o servidor central processa os dados.</p>
+        <div style="font-size: 40px;">📡</div>
+        <h3 id="status-texto">SINCRONIZANDO ARP...</h3>
     </div>
 
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h3 style="color: var(--azul-claro)">REGISTROS ARP</h3>
-        </div>
+        <div class="sidebar-header"><h3 style="color: var(--azul-claro)">REGISTROS ARP</h3></div>
         <div id="lista-abas"></div>
     </div>
 
     <div class="main-content">
         <header>
-            <div style="font-size: 24px; cursor: pointer;" onclick="toggleMenu()">☰</div>
-            <div style="font-weight: bold; color: var(--azul-claro);">CODEX D'ARC</div>
-            <div style="font-size: 10px;">PROTOCOLO ATIVO</div>
+            <div style="font-size: 22px; cursor: pointer;" onclick="toggleMenu()">☰</div>
+            <div style="font-weight: bold; color: var(--azul-claro);">CODEX D'ARC | ARP</div>
+            <div style="font-size: 9px; opacity: 0.7;">RESTRITO</div>
         </header>
 
         <main>
-            <div id="msg-parabens">
-                <h1 style="color: var(--sucesso); font-size: 2.5rem;">🎉 PARABÉNS!</h1>
-                <p style="color: var(--marinho); font-size: 1.2rem; font-weight: bold;">MÓDULO ATUALIZADO NO CODEX.</p>
-            </div>
+            <div class="container">
+                <div id="sucesso-final">
+                    <h1 style="color: var(--sucesso); font-size: 2rem;">🎉 PARABÉNS!</h1>
+                    <p style="margin: 20px 0; font-weight: bold;">Você preencheu todos os dados do protocolo ARP.</p>
+                    <button class="btn-registrar" onclick="enviarTudo()">ENVIAR PARA O PAINEL CENTRAL</button>
+                </div>
 
-            <div class="container" id="painel-principal">
-                <div class="card" id="card-ident">
+                <div class="card active-card" id="card-ident">
                     <h2>🧾 IDENTIFICAÇÃO</h2>
-                    <div class="input-group"><label>Nome Completo</label><input type="text" id="nome" class="req" onfocus="limparErro(this)"></div>
-                    <div class="input-group"><label>Codinome</label><input type="text" id="cod" class="req" onfocus="limparErro(this)"></div>
+                    <div class="input-group"><label>Nome Completo</label><input type="text" id="nome" class="req"></div>
+                    <div class="input-group"><label>Codinome (Para Reconhecimento)</label><input type="text" id="cod" class="req"></div>
                     <div class="row">
-                        <div class="input-group"><label>Nascimento</label><input type="text" id="nasc" class="req"></div>
+                        <div class="input-group"><label>Data Nascimento</label><input type="text" id="nasc" placeholder="dd/mm/aaaa" class="req"></div>
                         <div class="input-group"><label>Idade</label><input type="text" id="idade" class="req"></div>
                     </div>
                     <div class="row">
                         <div class="input-group"><label>Naturalidade</label><input type="text" id="nat" class="req"></div>
                         <div class="input-group"><label>Nacionalidade</label><input type="text" id="nac" class="req"></div>
                     </div>
-                    <button class="btn-registrar" onclick="salvarCard('card-ident', 'ident')">Próxima Etapa</button>
+                    <div class="row">
+                        <div class="input-group"><label>Profissão</label><input type="text" id="prof" class="req"></div>
+                        <div class="input-group"><label>Religião</label><input type="text" id="rel" class="req"></div>
+                    </div>
+                    <div class="check-container">
+                        <label>Está Namorando?</label>
+                        <div class="check-row">
+                            <div class="btn-check" id="nam-s" onclick="setSimpleCheck('namoro', 'sim', 'sub-namoro')">SIM</div>
+                            <div class="btn-check" id="nam-n" onclick="setSimpleCheck('namoro', 'nao', 'sub-namoro')">NÃO</div>
+                        </div>
+                        <div id="sub-namoro" class="sub-secao">
+                            <label>Nome do Parceiro(a)</label><input type="text" id="nome_parceiro">
+                        </div>
+                    </div>
+                    <button class="btn-registrar" onclick="proximo('card-ident', 'card-fisico', 'IDENTIFICAÇÃO')">Próxima Etapa</button>
                 </div>
 
-                <div class="card" id="card-fisico" style="display:none;">
+                <div class="card" id="card-fisico">
                     <h2>⚖️ DADOS FÍSICOS</h2>
                     <div class="row">
                         <div class="input-group"><label>Altura (m)</label><input type="text" id="alt" class="req"></div>
                         <div class="input-group"><label>Peso (kg)</label><input type="text" id="peso" class="req"></div>
                     </div>
                     <div class="row">
-                        <div class="input-group"><label>Pele</label><input type="text" id="pele" class="req"></div>
-                        <div class="input-group"><label>Olhos</label><input type="text" id="olhos" class="req"></div>
-                    </div>
-                    <button class="btn-registrar" onclick="salvarCard('card-fisico', 'fisico')">Próxima Etapa</button>
-                </div>
-
-                <div class="card" id="card-mob" style="display:none;">
-                    <h2>🚦 MOBILIDADE & FINALIZAÇÃO</h2>
-                    <div class="input-group"><label>Bairro</label><input type="text" id="bairro" class="req"></div>
-                    <div class="check-container" id="g-cnh">
-                        <label>Possui CNH?</label>
-                        <div class="check-row">
-                            <div class="btn-check" id="cnh-sim" onclick="setCheck('g-cnh', this, 'sim')">SIM</div>
-                            <div class="btn-check" id="cnh-nao" onclick="setCheck('g-cnh', this, 'nao')">NÃO</div>
+                        <div class="input-group"><label>Cor da Pele</label><input type="text" id="pele" class="req"></div>
+                        <div class="input-group"><label>Tipo Físico</label>
+                            <select id="tipo_fisico">
+                                <option value="Ectomorfo">Magro / Ectomorfo</option>
+                                <option value="Mesomorfo">Atlético / Mesomorfo</option>
+                                <option value="Endomorfo">Robusto / Endomorfo</option>
+                                <option value="Mediano">Misto / Mediano</option>
+                            </select>
                         </div>
                     </div>
-                    <button class="btn-registrar" onclick="enviarFinal()">FINALIZAR FICHA ARP</button>
+                    <div class="row">
+                        <div class="input-group"><label>Cor dos Olhos</label><input type="text" id="olhos" class="req"></div>
+                        <div class="input-group"><label>Cor do Cabelo</label><input type="text" id="cabelo" class="req"></div>
+                    </div>
+                    <div class="input-group"><label>Sinais Distintivos / Marcas (Tattoos, Cicatrizes...)</label>
+                        <input type="text" id="sinais" class="req" placeholder="Ex: Tattoo braço esquerdo, cicatriz perna...">
+                    </div>
+                    <button class="btn-registrar" onclick="proximo('card-fisico', 'card-outros', 'DADOS FÍSICOS')">Próxima Etapa</button>
+                </div>
+
+                <div class="card" id="card-outros">
+                    <h2>📍 OUTROS & MOBILIDADE</h2>
+                    <div class="row">
+                        <div class="input-group"><label>Bairro</label><input type="text" id="bairro" class="req"></div>
+                        <div class="input-group"><label>Escolaridade</label><input type="text" id="escola" class="req"></div>
+                    </div>
+                    <div class="row">
+                        <div class="check-container" style="flex:1"><label>Passaporte?</label>
+                            <div class="check-row">
+                                <div class="btn-check" onclick="setSimpleCheck('pass', 'sim')">SIM</div>
+                                <div class="btn-check" onclick="setSimpleCheck('pass', 'nao')">NÃO</div>
+                            </div>
+                        </div>
+                        <div class="check-container" style="flex:1"><label>CNH?</label>
+                            <div class="check-row">
+                                <div class="btn-check" onclick="setSimpleCheck('cnh', 'sim', 'sub-cnh')">SIM</div>
+                                <div class="btn-check" onclick="setSimpleCheck('cnh', 'nao', 'sub-cnh')">NÃO</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="sub-cnh" class="sub-secao">
+                        <label>Categorias</label><input type="text" id="cnh_cat">
+                        <label>Situação</label><input type="text" id="cnh_sit">
+                    </div>
+                    <div class="check-container"><label>🚦 Meios de Transporte:</label>
+                        <div class="check-row">
+                            <div class="btn-check" id="t-car" onclick="toggleT('carro')">CARRO</div>
+                            <div class="btn-check" id="t-mot" onclick="toggleT('moto')">MOTO</div>
+                            <div class="btn-check" id="t-bik" onclick="toggleT('bike')">BIKE</div>
+                            <div class="btn-check" id="t-bar" onclick="toggleT('barco')">BARCO</div>
+                            <div class="btn-check" id="t-ct" onclick="toggleT('cartao', 'sub-cartao')">CARTÃO</div>
+                        </div>
+                    </div>
+                    <div id="sub-cartao" class="sub-secao">
+                        <label>Detalhes do Cartão (Tipo/Empresa)</label><input type="text" id="info_cartao">
+                    </div>
+                    <div class="input-group"><label>Modelo e Cor do Veículo (Opcional)</label><input type="text" id="det_veic"></div>
+                    <button class="btn-registrar" onclick="proximo('card-outros', 'FINAL', 'MOBILIDADE')">CONCLUIR</button>
                 </div>
             </div>
-
-            <div class="container view-card" id="view-card"></div>
         </main>
     </div>
 
     <script>
-        let db = {};
+        let db = { transportes: {} };
         const SERVIDOR = "https://codex-darc.onrender.com";
 
         function toggleMenu() {
@@ -166,92 +194,76 @@
             document.getElementById('overlay').classList.toggle('active');
         }
 
-        function limparErro(el) { el.classList.remove('campo-erro'); }
-
-        function setCheck(groupId, el, tipo) {
-            const group = document.getElementById(groupId);
-            group.querySelectorAll('.btn-check').forEach(b => b.classList.remove('sim-active', 'nao-active', 'escolhido'));
-            el.classList.add('escolhido', tipo === 'sim' ? 'sim-active' : 'nao-active');
-            db[groupId] = tipo;
+        function setSimpleCheck(key, val, subId) {
+            db[key] = val;
+            const target = event.target.parentElement;
+            target.querySelectorAll('.btn-check').forEach(b => b.classList.remove('active-sim', 'active-nao'));
+            event.target.classList.add(val === 'sim' ? 'active-sim' : 'active-nao');
+            if(subId) document.getElementById(subId).style.display = (val === 'sim' ? 'block' : 'none');
         }
 
-        function salvarCard(cardId, secao) {
-            const card = document.getElementById(cardId);
-            const inputs = card.querySelectorAll('input.req');
-            let erro = false;
+        function toggleT(tipo, subId) {
+            event.target.classList.toggle('active-sim');
+            db.transportes[tipo] = event.target.classList.contains('active-sim');
+            if(subId) document.getElementById(subId).style.display = (db.transportes[tipo] ? 'block' : 'none');
+        }
 
-            inputs.forEach(i => { if(i.value.trim() === "") { i.classList.add('campo-erro'); erro = true; } });
+        function proximo(atual, prox, label) {
+            const card = document.getElementById(atual);
+            let erro = false;
+            card.querySelectorAll('input.req').forEach(i => {
+                if(!i.value.trim()) { i.classList.add('campo-erro'); erro = true; }
+                else { i.classList.remove('campo-erro'); db[i.id] = i.value; }
+            });
             if(erro) return;
 
-            db[secao] = {};
-            card.querySelectorAll('input').forEach(i => { db[secao][i.id] = i.value; });
+            card.querySelectorAll('input, select').forEach(i => db[i.id] = i.value);
+            card.classList.remove('active-card');
             
-            card.style.display = 'none';
-            const proximo = cardId === 'card-ident' ? 'card-fisico' : 'card-mob';
-            document.getElementById(proximo).style.display = 'block';
-            
-            showParabens();
-            gerarAba(secao, document.getElementById('nome').value);
+            if(prox === 'FINAL') {
+                document.getElementById('sucesso-final').style.display = 'block';
+            } else {
+                document.getElementById(prox).classList.add('active-card');
+            }
+            gerarAbaEdicao(atual, label);
         }
 
-        async function enviarFinal() {
+        function gerarAbaEdicao(id, label) {
+            const lista = document.getElementById('lista-abas');
+            if(document.querySelector(`[data-id="${id}"]`)) return;
+            const div = document.createElement('div');
+            div.className = 'aba-item';
+            div.setAttribute('data-id', id);
+            div.innerHTML = `<div class="aba-info">📂 ${label}</div>
+                             <button class="btn-edt" onclick="voltarPara('${id}')">EDITAR</button>`;
+            lista.appendChild(div);
+        }
+
+        function voltarPara(id) {
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('active-card'));
+            document.getElementById('sucesso-final').style.display = 'none';
+            document.getElementById(id).classList.add('active-card');
+            if(window.innerWidth < 768) toggleMenu();
+        }
+
+        async function enviarTudo() {
             const loading = document.getElementById('loading-overlay');
-            const statusTexto = document.getElementById('status-texto');
-            
-            // Coleta dados do último card antes de enviar
-            const cardMob = document.getElementById('card-mob');
-            db['final'] = {};
-            cardMob.querySelectorAll('input').forEach(i => { db['final'][i.id] = i.value; });
-
             loading.style.display = 'flex';
-            const nomeAgente = db.ident?.nome || "Agente";
             
-            // Formatação do conteúdo para o painel
-            const resumo = `FICHA COMPLETA ARP\nAgente: ${nomeAgente}\nCodinome: ${db.ident?.cod}\nLocal: ${db.final?.bairro}\nJSON: ${JSON.stringify(db)}`;
+            // Montagem do texto final para o painel conforme original
+            const textoFinal = `[PROTOCOLO ARP - CODEX]\nAGENTE: ${db.nome}\nCODINOME: ${db.cod}\nFÍSICO: ${db.tipo_fisico} / ${db.alt}m\nTRANSPORTE: ${JSON.stringify(db.transportes)}\nJSON_DATA: ${JSON.stringify(db)}`;
 
-            let sucesso = false;
-            let tentativas = 0;
-
-            while (!sucesso && tentativas < 15) {
-                tentativas++;
-                statusTexto.innerText = `CONECTANDO AO CODEX (Tentativa ${tentativas})...`;
-                
-                try {
-                    const res = await fetch(`${SERVIDOR}/registrar`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ nome: nomeAgente, conteudo: resumo })
-                    });
-
-                    if (res.ok) {
-                        sucesso = true;
-                        alert("✅ SUCESSO! DADOS ENVIADOS AO CODEX CENTRAL.");
-                        location.reload();
-                    }
-                } catch (err) {
-                    await new Promise(r => setTimeout(r, 4000));
-                }
-            }
-
-            if(!sucesso) {
-                alert("❌ O servidor demorou muito. Tente clicar em Enviar novamente.");
+            try {
+                const res = await fetch(`${SERVIDOR}/registrar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome: db.nome, conteudo: textoFinal })
+                });
+                if(res.ok) { alert("DADOS TRANSMITIDOS COM SUCESSO."); location.reload(); }
+            } catch(e) {
+                alert("ERRO NA TRANSMISSÃO. TENTANDO RECONECTAR...");
                 loading.style.display = 'none';
             }
-        }
-
-        function gerarAba(secao, nome) {
-            const lista = document.getElementById('lista-abas');
-            const item = document.createElement('div');
-            item.className = 'aba-item';
-            item.innerHTML = `<div class="aba-info">📂 ${secao.toUpperCase()} OK</div>`;
-            lista.appendChild(item);
-        }
-
-        function showParabens() {
-            const msg = document.getElementById('msg-parabens');
-            msg.style.display = 'block';
-            msg.style.opacity = '1';
-            setTimeout(() => { msg.style.opacity = '0'; setTimeout(() => msg.style.display = 'none', 1000); }, 2000);
         }
     </script>
 </body>

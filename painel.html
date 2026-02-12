@@ -1,122 +1,367 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS | Enterprise Data Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DARK CODEX | Enterprise Data Manager</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --primary: #00d4ff; --primary-dark: #0088cc;
-            --bg-page: #f0f4f8; --bg-white: #ffffff;
-            --text-main: #2d3748; --text-label: #718096; --border: #e2e8f0;
+            --primary: #00d4ff;
+            --bg-page: #ebf1f5;
+            --border: #e2e8f0;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg-page); height: 100vh; overflow: hidden; display: flex; color: var(--text-main); }
 
-        /* SIDEBAR */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background: var(--bg-page);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            color: #2d3748;
+        }
+
+        @keyframes lightShine {
+            0% { filter: brightness(1); }
+            50% { filter: brightness(1.6); }
+            100% { filter: brightness(1); }
+        }
+
+        .fa-search, 
+        .fa-search-plus, 
+        .drawer-handle, 
+        .file-item i, 
+        .search-noses-header i,
+        .data-box-container {
+            animation: lightShine 4.5s infinite ease-in-out;
+            will-change: filter;
+        }
+
+        .status-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: white;
+            font-weight: 900;
+        }
+        .status-true { background: #48bb78; }
+        .status-false { background: #f56565; }
+
+        .top-nav {
+            padding: 12px 20px;
+            background: #fff;
+            font-weight: 800;
+            font-size: 13px;
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+        }
+
+        .container { display: flex; flex: 1; position: relative; overflow: hidden; }
+
         .drawer {
-            position: fixed; top: 0; left: -180px; width: 180px; height: 100%;
-            background: var(--bg-white); border-right: 2px solid var(--primary);
-            transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2000;
-            box-shadow: 10px 0 30px rgba(0,0,0,0.05);
+            position: absolute;
+            top: 0; left: 0;
+            width: 200px;
+            height: 100%;
+            background: var(--bg-page);
+            padding: 15px;
+            z-index: 2000;
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
-        .drawer.open { left: 0; }
-        .drawer-handle {
-            position: absolute; right: -35px; top: 40px; width: 35px; height: 70px;
-            background: var(--primary); display: flex; align-items: center; justify-content: center;
-            cursor: pointer; border-radius: 0 10px 10px 0; color: white;
-            box-shadow: 4px 0 10px rgba(0, 212, 255, 0.3);
-        }
-        .drawer-header {
-            padding: 25px 15px; font-size: 10px; font-weight: 800; text-transform: uppercase;
-            letter-spacing: 2px; color: var(--primary-dark); border-bottom: 1px solid var(--border); text-align: center;
-        }
-        #file-list { padding: 10px; overflow-y: auto; height: calc(100% - 70px); }
-        .file-item {
-            padding: 15px 10px; margin-bottom: 10px; border-radius: 12px; cursor: pointer;
-            transition: 0.3s; display: flex; flex-direction: column; align-items: center;
-            text-align: center; border: 1px solid transparent;
-        }
-        .file-item:hover { background: #f0fbff; border-color: var(--primary); transform: translateY(-2px); }
-        .file-item i { color: var(--primary); font-size: 24px; margin-bottom: 8px; }
-        .file-item span { font-size: 10px; font-weight: 700; text-transform: uppercase; }
 
-        /* ÁREA DO RELATÓRIO */
-        .main-content { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .report-card {
-            width: 100%; max-width: 800px; height: 90vh; background: var(--bg-white);
-            border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.08);
-            display: none; flex-direction: column; overflow: hidden;
-            border: 1px solid var(--border); animation: fadeIn 0.4s ease;
+        .drawer.open { transform: translateX(0); }
+
+        .drawer-handle {
+            position: absolute; 
+            right: -38px;
+            top: 20px;
+            width: 34px; 
+            height: 34px; 
+            background: var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border-radius: 50%; color: white;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1); 
+            font-size: 12px; border: 2px solid white; 
+            z-index: 2001;
         }
+
+        .drawer-header-box {
+            background: white; padding: 10px; border-radius: 8px;
+            font-size: 11px; font-weight: 800; text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-transform: uppercase;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 5px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 35px 10px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 11px;
+            font-weight: 600;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: var(--primary);
+        }
+
+        #file-list { overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+
+        .file-item {
+            background: white; padding: 12px; border-radius: 10px;
+            display: flex; align-items: center; gap: 10px; cursor: pointer;
+            font-size: 10px; font-weight: 700; text-transform: uppercase;
+        }
+
+        .file-item i { 
+            color: var(--primary); 
+            font-size: 18px; 
+        }
+
+        .main-content { flex: 1; padding: 10px; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+
+        .report-card {
+            width: 100%; height: 90vh;
+            background: white; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: none; flex-direction: column; overflow: hidden;
+            animation: fadeIn 0.4s ease;
+        }
+
         .report-header {
-            padding: 20px 30px; background: #f8fafc; border-bottom: 2px solid var(--primary);
+            padding: 15px 20px; border-bottom: 1px solid #f0f0f0;
             display: flex; justify-content: space-between; align-items: center;
         }
-        .report-body { flex: 1; padding: 30px 40px; overflow-y: auto; }
 
-        /* DADOS */
-        .section-header {
-            background: #f1f5f9; padding: 10px 15px; border-radius: 6px;
-            margin: 25px 0 15px 0; font-size: 11px; font-weight: 800;
-            color: var(--primary-dark); border-left: 4px solid var(--primary); text-transform: uppercase;
+        .report-body { 
+            flex: 1; 
+            padding: 20px; 
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch;
         }
-        .info-card { background: #fff; border: 1px solid #edf2f7; border-radius: 10px; padding: 5px 15px; margin-bottom: 15px; }
-        .data-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f7fafc; }
-        .data-row:last-child { border: none; }
-        .label-tech { font-size: 10px; font-weight: 800; color: var(--text-label); text-transform: uppercase; }
-        .value-tech { font-size: 13px; font-weight: 600; color: var(--text-main); text-align: right; max-width: 70%; word-break: break-word; }
 
-        .close-btn {
-            background: #fee2e2; border: none; color: #ef4444; width: 32px; height: 32px;
-            border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px;
+        .search-noses-header {
+            display: flex; align-items: center; gap: 15px; margin-bottom: 25px;
         }
-        #placeholder { text-align: center; opacity: 0.4; }
-        .status-bar {
-            position: fixed; bottom: 0; width: 100%; height: 35px; background: white;
-            border-top: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px;
-            font-size: 10px; font-weight: 800; color: var(--text-label);
+        .search-noses-header i { color: var(--primary); font-size: 32px; }
+        .search-noses-header h2 { font-size: 20px; font-weight: 800; line-height: 1; }
+        .search-noses-header span { color: var(--primary); font-size: 12px; font-weight: 800; display: block; }
+
+        .section-header-styled {
+            background: #edf2f7; padding: 6px 12px; border-radius: 4px;
+            display: inline-block; font-size: 10px; font-weight: 800;
+            color: #4a5568; text-transform: uppercase; margin: 15px 0 10px 0;
         }
+
+        .data-box-container {
+            border-left: 4px solid var(--primary);
+            background: #fcfdfe; margin-bottom: 15px;
+        }
+
+        .data-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 15px; border-bottom: 1px solid #f1f5f9;
+            font-size: 11px; font-weight: 700;
+        }
+
+        .data-row span:last-child { color: #4a5568; text-align: right; max-width: 60%; word-break: break-all; }
+
+        /* MARCA OFICIAL NO FINAL */
+        .official-footer {
+            margin-top: 40px;
+            padding: 20px 0;
+            text-align: center;
+            border-top: 1px dashed var(--border);
+        }
+        .official-footer h4 {
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #2d3748;
+        }
+        .official-footer span {
+            font-size: 9px;
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        #overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3); z-index: 1999; display: none; opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div class="drawer" id="sidebar">
-        <div class="drawer-handle" onclick="toggleSidebar()"><i class="fas fa-network-wired"></i></div>
-        <div class="drawer-header">Registros Ativos</div>
-        <div id="file-list"></div>
+    <header class="top-nav">
+        DARK CODEX <span style="font-weight: 400; color: #a0aec0; margin-left: 5px;">| Enterprise Data Manager</span>
+    </header>
+
+    <div class="container">
+        <div id="overlay" onclick="toggleSidebar()"></div>
+
+        <aside class="drawer" id="sidebar">
+            <div class="drawer-handle" onclick="toggleSidebar()">
+                <i class="fas fa-chevron-right" id="handleIcon"></i>
+            </div>
+            <div class="drawer-header-box">Registros Ativos</div>
+            
+            <div class="search-box">
+                <input type="text" id="searchAgents" placeholder="Pesquisar..." onkeyup="filterAgents()">
+                <i class="fas fa-search"></i>
+            </div>
+
+            <div id="file-list"></div>
+        </aside>
+
+        <main class="main-content">
+            <div id="placeholder" style="text-align: center;">
+                <i class="fas fa-search" style="font-size: 45px; color: var(--primary); margin-bottom: 10px;"></i>
+                <div style="color:var(--primary); font-size:12px; font-weight:800;">SYSTEM_READY</div>
+                <h2 style="font-weight: 800; font-size: 24px;">DARK CODEX</h2>
+                <p style="font-size: 9px; color: #a0aec0; letter-spacing: 1px;">SELECIONE UM ARQUIVO NA GAVETA</p>
+            </div>
+
+            <div class="report-card" id="reportCard">
+                <header class="report-header">
+                    <h3 style="font-size: 12px; font-weight: 800;">REPORT CARD</h3>
+                    <button style="background:#edf2f7; border:none; padding:6px 12px; border-radius:4px; font-size:9px; font-weight:800; cursor:pointer;" onclick="closeReport()">FECHAR</button>
+                </header>
+                
+                <div class="report-body" id="scrollArea">
+                    <div class="search-noses-header">
+                        <i class="fas fa-search-plus"></i>
+                        <div>
+                            <span>Search_Noses</span>
+                            <h2>DARK CODEX</h2>
+                        </div>
+                    </div>
+                    <div id="reportContent"></div>
+                    
+                    <div class="official-footer">
+                        <h4>DARK CODEX</h4>
+                        <span>MARCA OFICIAL</span>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
-
-    <main class="main-content">
-        <div id="placeholder">
-            <i class="fas fa-search-nodes" style="font-size: 60px; color: var(--primary); margin-bottom: 20px;"></i>
-            <h2 style="letter-spacing: 5px; font-weight: 300;">NEXUS CORE</h2>
-            <p>SELECIONE UM ARQUIVO PARA EXTRAÇÃO</p>
-        </div>
-
-        <div class="report-card" id="reportCard">
-            <header class="report-header">
-                <div style="font-weight: 800; font-size: 13px;"><i class="fas fa-file-invoice"></i> DATA_EXTRACTION_REPORT</div>
-                <button class="close-btn" onclick="closeReport()">&times;</button>
-            </header>
-            <div class="report-body" id="reportContent"></div>
-        </div>
-    </main>
-
-    <footer class="status-bar">
-        <div><i class="fas fa-circle" style="color:#10b981; margin-right:5px"></i> LINK: ONLINE</div>
-        <div style="margin-left:auto" id="clock">00:00:00</div>
-    </footer>
 
     <script>
         const API = "https://codex-darc.onrender.com";
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const handleIcon = document.getElementById('handleIcon');
+        
+        let startX = 0;
+        let startY = 0;
+        let isDragging = false;
+        let isScrolling = false;
 
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+        function filterAgents() {
+            const input = document.getElementById('searchAgents').value.toLowerCase();
+            const items = document.getElementsByClassName('file-item');
+            
+            for (let i = 0; i < items.length; i++) {
+                const text = items[i].getElementsByTagName('span')[0].innerText.toLowerCase();
+                items[i].style.display = text.includes(input) ? "flex" : "none";
+            }
+        }
+
+        document.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            isDragging = false;
+            isScrolling = false;
+        }, { passive: true });
+
+        document.addEventListener('touchmove', (e) => {
+            const currentX = e.touches[0].clientX;
+            const currentY = e.touches[0].clientY;
+            const diffX = currentX - startX;
+            const diffY = currentY - startY;
+
+            if (!isDragging && Math.abs(diffY) > Math.abs(diffX)) {
+                isScrolling = true;
+                return;
+            }
+
+            if (Math.abs(diffX) > 10 && !isScrolling) {
+                isDragging = true;
+                sidebar.style.transition = 'none';
+                let offset = sidebar.classList.contains('open') ? diffX : -200 + diffX;
+                if (offset > 0) offset = 0;
+                if (offset < -200) offset = -200;
+                
+                sidebar.style.transform = `translateX(${offset}px)`;
+                overlay.style.display = 'block';
+                overlay.style.opacity = (200 + offset) / 200;
+                
+                if(e.cancelable) e.preventDefault();
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+            sidebar.style.transition = 'transform 0.3s ease';
+            
+            const currentMatrix = window.getComputedStyle(sidebar).transform;
+            const x = currentMatrix !== 'none' ? parseInt(currentMatrix.split(',')[4]) : -200;
+
+            if (x > -100) {
+                sidebar.classList.add('open');
+                sidebar.style.transform = 'translateX(0)';
+                overlay.style.opacity = '1';
+                handleIcon.className = "fas fa-chevron-left";
+            } else {
+                sidebar.classList.remove('open');
+                sidebar.style.transform = 'translateX(-100%)';
+                overlay.style.opacity = '0';
+                handleIcon.className = "fas fa-chevron-right";
+                setTimeout(() => { if(!sidebar.classList.contains('open')) overlay.style.display = 'none'; }, 300);
+            }
+        });
+
+        function toggleSidebar() {
+            sidebar.style.transition = 'transform 0.3s ease';
+            const isOpen = sidebar.classList.toggle('open');
+            sidebar.style.transform = isOpen ? 'translateX(0)' : 'translateX(-100%)';
+            overlay.style.display = isOpen ? 'block' : 'none';
+            setTimeout(() => { overlay.style.opacity = isOpen ? '1' : '0'; }, 10);
+            handleIcon.className = isOpen ? "fas fa-chevron-left" : "fas fa-chevron-right";
+        }
 
         async function fetchDatabase() {
             try {
@@ -125,14 +370,25 @@
                 const list = document.getElementById('file-list');
                 list.innerHTML = "";
                 data.reverse().forEach(item => {
-                    const label = item.agente || item.nome || "REGISTRO";
+                    const label = item.nome || item.agente || "ID_" + item._id.slice(-4);
                     const div = document.createElement('div');
                     div.className = 'file-item';
-                    div.onclick = () => renderParser(item);
-                    div.innerHTML = `<i class="fas fa-user-shield"></i><span>${label}</span>`;
+                    div.onclick = () => { renderParser(item); toggleSidebar(); };
+                    div.innerHTML = `<i class="fas fa-id-card"></i><span>${label}</span>`;
                     list.appendChild(div);
                 });
-            } catch (e) { console.error("Erro na conexão"); }
+                filterAgents();
+            } catch (e) { console.error("OFFLINE"); }
+        }
+
+        function formatVal(v) {
+            if (v === true || String(v).toLowerCase() === 'true') {
+                return `<div class="status-box status-true">V</div>`;
+            }
+            if (v === false || String(v).toLowerCase() === 'false') {
+                return `<div class="status-box status-false">X</div>`;
+            }
+            return v || '---';
         }
 
         function renderParser(user) {
@@ -140,45 +396,49 @@
             document.getElementById('reportCard').style.display = 'flex';
             const container = document.getElementById('reportContent');
             
-            // Cabeçalho de Identificação
-            let html = `
-                <div class="section-header">Identificação do Registro</div>
-                <div class="info-card">
-                    <div class="data-row"><span class="label-tech">Codinome / Agente</span><span class="value-tech">${user.agente || 'N/A'}</span></div>
-                    <div class="data-row"><span class="label-tech">Hora da Sincronia</span><span class="value-tech">${user.hora || '---'}</span></div>
-                </div>
-            `;
+            let html = `<div class="section-header-styled">IDENTIFICAÇÃO</div>
+                        <div class="data-box-container">
+                            <div class="data-row"><span>AGENTE</span><span>${user.agente || user.nome || 'N/A'}</span></div>
+                            <div class="data-row"><span>SINC</span><span>${user.hora || '--:--'}</span></div>
+                        </div>`;
 
-            // Parser do Bloco de Conteúdo (Extrai os dados do texto corrido)
-            if (user.conteudo) {
-                const linhas = user.conteudo.split('\n');
-                let emDados = false;
-                let dadosHTML = `<div class="section-header">Dados do Protocolo ARP</div><div class="info-card">`;
-
-                linhas.forEach(linha => {
-                    // Só processa linhas que têm ":" e não são metadados (JSON_DATA ou colchetes)
-                    if (linha.includes(':') && !linha.includes('{') && !linha.includes('[PROTOCOLO')) {
-                        const partes = linha.split(':');
-                        const chave = partes[0].trim();
-                        const valor = partes.slice(1).join(':').trim();
-
-                        if (valor && valor !== 'N/A') {
-                            dadosHTML += `
-                                <div class="data-row">
-                                    <span class="label-tech">${chave}</span>
-                                    <span class="value-tech">${valor}</span>
-                                </div>`;
-                            emDados = true;
+            Object.entries(user).forEach(([key, value]) => {
+                if (['__v', '_id', 'hora', 'nome', 'agente'].includes(key)) return;
+                
+                if (typeof value === 'string' && value.includes('{')) {
+                    try {
+                        const jsonMatch = value.match(/\{.*\}/);
+                        if (jsonMatch) {
+                            const parsed = JSON.parse(jsonMatch[0]);
+                            html += `<div class="section-header-styled">${key.toUpperCase()} DETALHADO</div>
+                                     <div class="data-box-container">`;
+                            Object.entries(parsed).forEach(([sKey, sVal]) => {
+                                if (typeof sVal === 'object' && sVal !== null) {
+                                    Object.entries(sVal).forEach(([k, v]) => {
+                                        html += `<div class="data-row"><span>${k.toUpperCase()}</span><span>${formatVal(v)}</span></div>`;
+                                    });
+                                } else {
+                                    html += `<div class="data-row"><span>${sKey.toUpperCase()}</span><span>${formatVal(sVal)}</span></div>`;
+                                }
+                            });
+                            html += `</div>`;
                         }
+                    } catch (e) {
+                        html += `<div class="section-header-styled">${key.toUpperCase()}</div>
+                                 <div class="data-box-container">
+                                    <div class="data-row"><span>DADO</span><span>${formatVal(value)}</span></div>
+                                 </div>`;
                     }
-                });
-
-                dadosHTML += `</div>`;
-                if (emDados) html += dadosHTML;
-            }
+                } else {
+                    html += `<div class="section-header-styled">${key.replace(/_/g, ' ').toUpperCase()}</div>
+                             <div class="data-box-container">
+                                <div class="data-row"><span>DADO</span><span>${formatVal(value)}</span></div>
+                             </div>`;
+                }
+            });
 
             container.innerHTML = html;
-            if(window.innerWidth < 800) toggleSidebar();
+            document.getElementById('scrollArea').scrollTop = 0;
         }
 
         function closeReport() {
@@ -186,11 +446,8 @@
             document.getElementById('placeholder').style.display = 'block';
         }
 
-        function clock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString('pt-BR'); }
-        setInterval(clock, 1000);
-        setInterval(fetchDatabase, 5000);
+        setInterval(fetchDatabase, 8000);
         fetchDatabase();
-        clock();
     </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DARK CODEX | Enterprise Data Manager</title>
+    <title>CODEX D'ARC | Enterprise Data Manager</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -31,192 +31,100 @@
             100% { filter: brightness(1); }
         }
 
-        .fa-search, 
-        .fa-search-plus, 
-        .drawer-handle, 
-        .file-item i, 
-        .search-noses-header i,
-        .data-box-container {
+        .fa-search, .fa-search-plus, .drawer-handle, .file-item i, .search-noses-header i, .data-box-container {
             animation: lightShine 4.5s infinite ease-in-out;
             will-change: filter;
         }
 
         .status-box {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 22px;
-            height: 22px;
-            border-radius: 4px;
-            font-size: 14px;
-            color: white;
-            font-weight: 900;
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 22px; height: 22px; border-radius: 4px; font-size: 14px; color: white; font-weight: 900;
         }
         .status-true { background: #48bb78; }
         .status-false { background: #f56565; }
 
         .top-nav {
-            padding: 12px 20px;
-            background: #fff;
-            font-weight: 800;
-            font-size: 13px;
-            border-bottom: 1px solid var(--border);
-            z-index: 100;
+            padding: 12px 20px; background: #fff; font-weight: 800; font-size: 13px;
+            border-bottom: 1px solid var(--border); z-index: 100;
         }
 
         .container { display: flex; flex: 1; position: relative; overflow: hidden; }
 
         .drawer {
-            position: absolute;
-            top: 0; left: 0;
-            width: 200px;
-            height: 100%;
-            background: var(--bg-page);
-            padding: 15px;
-            z-index: 2000;
-            transform: translateX(-100%);
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            position: absolute; top: 0; left: 0; width: 200px; height: 100%;
+            background: var(--bg-page); padding: 15px; z-index: 2000;
+            transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px;
         }
 
         .drawer.open { transform: translateX(0); }
 
         .drawer-handle {
-            position: absolute; 
-            right: -38px;
-            top: 20px;
-            width: 34px; 
-            height: 34px; 
-            background: var(--primary);
-            display: flex; align-items: center; justify-content: center;
+            position: absolute; right: -38px; top: 20px; width: 34px; height: 34px; 
+            background: var(--primary); display: flex; align-items: center; justify-content: center;
             cursor: pointer; border-radius: 50%; color: white;
-            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1); 
-            font-size: 12px; border: 2px solid white; 
-            z-index: 2001;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1); font-size: 12px; border: 2px solid white; z-index: 2001;
         }
 
         .drawer-header-box {
-            background: white; padding: 10px; border-radius: 8px;
-            font-size: 11px; font-weight: 800; text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-transform: uppercase;
+            background: white; padding: 10px; border-radius: 8px; font-size: 11px;
+            font-weight: 800; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-transform: uppercase;
         }
 
-        .search-box {
-            position: relative;
-            margin-bottom: 5px;
-        }
-
+        .search-box { position: relative; margin-bottom: 5px; }
         .search-box input {
-            width: 100%;
-            padding: 10px 35px 10px 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            font-size: 11px;
-            font-weight: 600;
-            outline: none;
-            transition: border-color 0.2s;
+            width: 100%; padding: 10px 35px 10px 12px; border-radius: 8px;
+            border: 1px solid var(--border); font-size: 11px; font-weight: 600; outline: none;
         }
-
-        .search-box input:focus {
-            border-color: var(--primary);
-        }
-
-        .search-box i {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 12px;
-            color: var(--primary);
-        }
+        .search-box i { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--primary); }
 
         #file-list { overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
 
         .file-item {
-            background: white; padding: 12px; border-radius: 10px;
-            display: flex; align-items: center; gap: 10px; cursor: pointer;
-            font-size: 10px; font-weight: 700; text-transform: uppercase;
+            background: white; padding: 12px; border-radius: 10px; display: flex;
+            align-items: center; gap: 10px; cursor: pointer; font-size: 10px; font-weight: 700; text-transform: uppercase;
         }
 
-        .file-item i { 
-            color: var(--primary); 
-            font-size: 18px; 
-        }
+        .file-item i { color: var(--primary); font-size: 18px; }
 
         .main-content { flex: 1; padding: 10px; display: flex; justify-content: center; align-items: center; overflow: hidden; }
 
         .report-card {
-            width: 100%; height: 90vh;
-            background: white; border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            display: none; flex-direction: column; overflow: hidden;
+            width: 100%; height: 90vh; background: white; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: none; flex-direction: column; overflow: hidden;
             animation: fadeIn 0.4s ease;
         }
 
-        .report-header {
-            padding: 15px 20px; border-bottom: 1px solid #f0f0f0;
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        .report-header { padding: 15px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
 
-        .report-body { 
-            flex: 1; 
-            padding: 20px; 
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch;
-        }
+        .report-body { flex: 1; padding: 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 
-        .search-noses-header {
-            display: flex; align-items: center; gap: 15px; margin-bottom: 25px;
-        }
+        .search-noses-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
         .search-noses-header i { color: var(--primary); font-size: 32px; }
         .search-noses-header h2 { font-size: 20px; font-weight: 800; line-height: 1; }
         .search-noses-header span { color: var(--primary); font-size: 12px; font-weight: 800; display: block; }
 
         .section-header-styled {
             background: #edf2f7; padding: 6px 12px; border-radius: 4px;
-            display: inline-block; font-size: 10px; font-weight: 800;
-            color: #4a5568; text-transform: uppercase; margin: 15px 0 10px 0;
+            display: inline-block; font-size: 10px; font-weight: 800; color: #4a5568; text-transform: uppercase; margin: 15px 0 10px 0;
         }
 
-        .data-box-container {
-            border-left: 4px solid var(--primary);
-            background: #fcfdfe; margin-bottom: 15px;
-        }
+        .data-box-container { border-left: 4px solid var(--primary); background: #fcfdfe; margin-bottom: 15px; }
 
         .data-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 15px; border-bottom: 1px solid #f1f5f9;
-            font-size: 11px; font-weight: 700;
+            display: flex; justify-content: space-between; align-items: center; padding: 12px 15px;
+            border-bottom: 1px solid #f1f5f9; font-size: 11px; font-weight: 700;
         }
 
         .data-row span:last-child { color: #4a5568; text-align: right; max-width: 60%; word-break: break-all; }
 
-        /* MARCA OFICIAL NO FINAL */
-        .official-footer {
-            margin-top: 40px;
-            padding: 20px 0;
-            text-align: center;
-            border-top: 1px dashed var(--border);
-        }
-        .official-footer h4 {
-            font-size: 16px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            color: #2d3748;
-        }
-        .official-footer span {
-            font-size: 9px;
-            color: var(--primary);
-            font-weight: 800;
-        }
+        .official-footer { margin-top: 40px; padding: 20px 0; text-align: center; border-top: 1px dashed var(--border); }
+        .official-footer h4 { font-size: 16px; font-weight: 900; letter-spacing: 2px; color: #2d3748; }
+        .official-footer span { font-size: 9px; color: var(--primary); font-weight: 800; }
 
         #overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.3); z-index: 1999; display: none; opacity: 0;
-            transition: opacity 0.3s ease;
+            background: rgba(0,0,0,0.3); z-index: 1999; display: none; opacity: 0; transition: opacity 0.3s ease;
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -224,24 +132,17 @@
 </head>
 <body>
 
-    <header class="top-nav">
-        DARK CODEX <span style="font-weight: 400; color: #a0aec0; margin-left: 5px;">| Enterprise Data Manager</span>
-    </header>
+    <header class="top-nav">CODEX D'ARC <span style="font-weight: 400; color: #a0aec0; margin-left: 5px;">| Enterprise Data Manager</span></header>
 
     <div class="container">
         <div id="overlay" onclick="toggleSidebar()"></div>
-
         <aside class="drawer" id="sidebar">
-            <div class="drawer-handle" onclick="toggleSidebar()">
-                <i class="fas fa-chevron-right" id="handleIcon"></i>
-            </div>
+            <div class="drawer-handle" onclick="toggleSidebar()"><i class="fas fa-chevron-right" id="handleIcon"></i></div>
             <div class="drawer-header-box">Registros Ativos</div>
-            
             <div class="search-box">
                 <input type="text" id="searchAgents" placeholder="Pesquisar..." onkeyup="filterAgents()">
                 <i class="fas fa-search"></i>
             </div>
-
             <div id="file-list"></div>
         </aside>
 
@@ -249,7 +150,7 @@
             <div id="placeholder" style="text-align: center;">
                 <i class="fas fa-search" style="font-size: 45px; color: var(--primary); margin-bottom: 10px;"></i>
                 <div style="color:var(--primary); font-size:12px; font-weight:800;">SYSTEM_READY</div>
-                <h2 style="font-weight: 800; font-size: 24px;">DARK CODEX</h2>
+                <h2 style="font-weight: 800; font-size: 24px;">CODEX D'ARC</h2>
                 <p style="font-size: 9px; color: #a0aec0; letter-spacing: 1px;">SELECIONE UM ARQUIVO NA GAVETA</p>
             </div>
 
@@ -258,21 +159,10 @@
                     <h3 style="font-size: 12px; font-weight: 800;">REPORT CARD</h3>
                     <button style="background:#edf2f7; border:none; padding:6px 12px; border-radius:4px; font-size:9px; font-weight:800; cursor:pointer;" onclick="closeReport()">FECHAR</button>
                 </header>
-                
                 <div class="report-body" id="scrollArea">
-                    <div class="search-noses-header">
-                        <i class="fas fa-search-plus"></i>
-                        <div>
-                            <span>Search_Noses</span>
-                            <h2>DARK CODEX</h2>
-                        </div>
-                    </div>
+                    <div class="search-noses-header"><i class="fas fa-search-plus"></i><div><span>Search_Noses</span><h2>CODEX D'ARC</h2></div></div>
                     <div id="reportContent"></div>
-                    
-                    <div class="official-footer">
-                        <h4>DARK CODEX</h4>
-                        <span>MARCA OFICIAL</span>
-                    </div>
+                    <div class="official-footer"><h4>CODEX D'ARC</h4><span>MARCA OFICIAL</span></div>
                 </div>
             </div>
         </main>
@@ -284,74 +174,38 @@
         const overlay = document.getElementById('overlay');
         const handleIcon = document.getElementById('handleIcon');
         
-        let startX = 0;
-        let startY = 0;
-        let isDragging = false;
-        let isScrolling = false;
+        let startX = 0, startY = 0, isDragging = false, isScrolling = false;
 
         function filterAgents() {
             const input = document.getElementById('searchAgents').value.toLowerCase();
             const items = document.getElementsByClassName('file-item');
-            
             for (let i = 0; i < items.length; i++) {
                 const text = items[i].getElementsByTagName('span')[0].innerText.toLowerCase();
                 items[i].style.display = text.includes(input) ? "flex" : "none";
             }
         }
 
-        document.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-            isDragging = false;
-            isScrolling = false;
-        }, { passive: true });
-
+        // SISTEMA DE GAVETA (RESTAURADO)
+        document.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; isDragging = false; isScrolling = false; }, { passive: true });
         document.addEventListener('touchmove', (e) => {
-            const currentX = e.touches[0].clientX;
-            const currentY = e.touches[0].clientY;
-            const diffX = currentX - startX;
-            const diffY = currentY - startY;
-
-            if (!isDragging && Math.abs(diffY) > Math.abs(diffX)) {
-                isScrolling = true;
-                return;
-            }
-
+            const currentX = e.touches[0].clientX, currentY = e.touches[0].clientY;
+            const diffX = currentX - startX, diffY = currentY - startY;
+            if (!isDragging && Math.abs(diffY) > Math.abs(diffX)) { isScrolling = true; return; }
             if (Math.abs(diffX) > 10 && !isScrolling) {
-                isDragging = true;
-                sidebar.style.transition = 'none';
+                isDragging = true; sidebar.style.transition = 'none';
                 let offset = sidebar.classList.contains('open') ? diffX : -200 + diffX;
-                if (offset > 0) offset = 0;
-                if (offset < -200) offset = -200;
-                
+                if (offset > 0) offset = 0; if (offset < -200) offset = -200;
                 sidebar.style.transform = `translateX(${offset}px)`;
-                overlay.style.display = 'block';
-                overlay.style.opacity = (200 + offset) / 200;
-                
+                overlay.style.display = 'block'; overlay.style.opacity = (200 + offset) / 200;
                 if(e.cancelable) e.preventDefault();
             }
         }, { passive: false });
 
         document.addEventListener('touchend', (e) => {
-            if (!isDragging) return;
-            isDragging = false;
-            sidebar.style.transition = 'transform 0.3s ease';
-            
-            const currentMatrix = window.getComputedStyle(sidebar).transform;
-            const x = currentMatrix !== 'none' ? parseInt(currentMatrix.split(',')[4]) : -200;
-
-            if (x > -100) {
-                sidebar.classList.add('open');
-                sidebar.style.transform = 'translateX(0)';
-                overlay.style.opacity = '1';
-                handleIcon.className = "fas fa-chevron-left";
-            } else {
-                sidebar.classList.remove('open');
-                sidebar.style.transform = 'translateX(-100%)';
-                overlay.style.opacity = '0';
-                handleIcon.className = "fas fa-chevron-right";
-                setTimeout(() => { if(!sidebar.classList.contains('open')) overlay.style.display = 'none'; }, 300);
-            }
+            if (!isDragging) return; isDragging = false; sidebar.style.transition = 'transform 0.3s ease';
+            const x = parseInt(window.getComputedStyle(sidebar).transform.split(',')[4]) || -200;
+            if (x > -100) { sidebar.classList.add('open'); sidebar.style.transform = 'translateX(0)'; overlay.style.opacity = '1'; handleIcon.className = "fas fa-chevron-left"; }
+            else { sidebar.classList.remove('open'); sidebar.style.transform = 'translateX(-100%)'; overlay.style.opacity = '0'; handleIcon.className = "fas fa-chevron-right"; setTimeout(() => { if(!sidebar.classList.contains('open')) overlay.style.display = 'none'; }, 300); }
         });
 
         function toggleSidebar() {
@@ -382,70 +236,78 @@
         }
 
         function formatVal(v) {
-            if (v === true || String(v).toLowerCase() === 'true') {
-                return `<div class="status-box status-true">V</div>`;
-            }
-            if (v === false || String(v).toLowerCase() === 'false') {
-                return `<div class="status-box status-false">X</div>`;
-            }
+            if (v === true || String(v).toLowerCase() === 'true') return `<div class="status-box status-true">V</div>`;
+            if (v === false || String(v).toLowerCase() === 'false') return `<div class="status-box status-false">X</div>`;
             return v || '---';
+        }
+
+        // TRADUTOR TOTAL E COMPLETO (BASEADO NOS PRINTS)
+        function expandLabel(text) {
+            if (!text) return "";
+            let up = text.replace(/_/g, ' ').toUpperCase().trim();
+            const map = {
+                'ALT': 'ALTURA',
+                'PESO': 'PESO CORPORAL',
+                'PELE': 'COR DA PELE',
+                'TIPO FISICO': 'TIPO FÍSICO',
+                'OLHOS': 'COR DOS OLHOS',
+                'CABELO': 'COR DO CABELO',
+                'SINAIS': 'SINAIS E CICATRIZES',
+                'PASS': 'PASSAPORTE',
+                'PASSAPORTE': 'PASSAPORTE',
+                'CNH': 'CARTEIRA DE HABILITAÇÃO',
+                'BAIRRO': 'BAIRRO DE RESIDÊNCIA',
+                'ESCOLA': 'INSTITUIÇÃO DE ENSINO',
+                'CNH CAT': 'CATEGORIA DA HABILITAÇÃO',
+                'CNH_CAT': 'CATEGORIA DA HABILITAÇÃO',
+                'CNH SIT': 'SITUAÇÃO DA HABILITAÇÃO',
+                'CNH_SIT': 'SITUAÇÃO DA HABILITAÇÃO',
+                'INFO CARTAO': 'INFORMAÇÕES DO CARTÃO',
+                'INFO_CARTAO': 'INFORMAÇÕES DO CARTÃO',
+                'DET VEIC': 'DETALHES DO VEÍCULO',
+                'DET_VEIC': 'DETALHES DO VEÍCULO',
+                'NAMORO': 'ESTADO CIVIL',
+                'NAMORANDO': 'ESTADO CIVIL',
+                'COD': 'CÓDIGO DE IDENTIFICAÇÃO',
+                'NASC': 'DATA DE NASCIMENTO',
+                'NAT': 'NATURALIDADE',
+                'PROF': 'PROFISSÃO ATUAL',
+                'REL': 'RELACIONAMENTO',
+                'RELACIONAMENTO': 'RELACIONAMENTO',
+                'SINC': 'SINCRONIZAÇÃO'
+            };
+            return map[up] || up;
         }
 
         function renderParser(user) {
             document.getElementById('placeholder').style.display = 'none';
             document.getElementById('reportCard').style.display = 'flex';
             const container = document.getElementById('reportContent');
-            
-            let html = `<div class="section-header-styled">IDENTIFICAÇÃO</div>
-                        <div class="data-box-container">
-                            <div class="data-row"><span>AGENTE</span><span>${user.agente || user.nome || 'N/A'}</span></div>
-                            <div class="data-row"><span>SINC</span><span>${user.hora || '--:--'}</span></div>
-                        </div>`;
+            let html = `<div class="section-header-styled">DADOS DO REGISTRO</div>`;
 
             Object.entries(user).forEach(([key, value]) => {
                 if (['__v', '_id', 'hora', 'nome', 'agente'].includes(key)) return;
-                
+                let label = expandLabel(key);
                 if (typeof value === 'string' && value.includes('{')) {
                     try {
-                        const jsonMatch = value.match(/\{.*\}/);
-                        if (jsonMatch) {
-                            const parsed = JSON.parse(jsonMatch[0]);
-                            html += `<div class="section-header-styled">${key.toUpperCase()} DETALHADO</div>
-                                     <div class="data-box-container">`;
-                            Object.entries(parsed).forEach(([sKey, sVal]) => {
-                                if (typeof sVal === 'object' && sVal !== null) {
-                                    Object.entries(sVal).forEach(([k, v]) => {
-                                        html += `<div class="data-row"><span>${k.toUpperCase()}</span><span>${formatVal(v)}</span></div>`;
-                                    });
-                                } else {
-                                    html += `<div class="data-row"><span>${sKey.toUpperCase()}</span><span>${formatVal(sVal)}</span></div>`;
-                                }
-                            });
-                            html += `</div>`;
-                        }
+                        const parsed = JSON.parse(value.match(/\{.*\}/)[0]);
+                        html += `<div class="section-header-styled">${label}</div><div class="data-box-container">`;
+                        Object.entries(parsed).forEach(([sKey, sVal]) => {
+                            html += `<div class="data-row"><span>${expandLabel(sKey)}</span><span>${formatVal(sVal)}</span></div>`;
+                        });
+                        html += `</div>`;
                     } catch (e) {
-                        html += `<div class="section-header-styled">${key.toUpperCase()}</div>
-                                 <div class="data-box-container">
-                                    <div class="data-row"><span>DADO</span><span>${formatVal(value)}</span></div>
-                                 </div>`;
+                        html += `<div class="section-header-styled">${label}</div><div class="data-box-container"><div class="data-row"><span>INFORMAÇÃO</span><span>${formatVal(value)}</span></div></div>`;
                     }
                 } else {
-                    html += `<div class="section-header-styled">${key.replace(/_/g, ' ').toUpperCase()}</div>
-                             <div class="data-box-container">
-                                <div class="data-row"><span>DADO</span><span>${formatVal(value)}</span></div>
-                             </div>`;
+                    html += `<div class="section-header-styled">${label}</div><div class="data-box-container"><div class="data-row"><span>INFORMAÇÃO</span><span>${formatVal(value)}</span></div></div>`;
                 }
             });
-
             container.innerHTML = html;
             document.getElementById('scrollArea').scrollTop = 0;
         }
 
-        function closeReport() {
-            document.getElementById('reportCard').style.display = 'none';
-            document.getElementById('placeholder').style.display = 'block';
-        }
-
+        function closeReport() { document.getElementById('reportCard').style.display = 'none'; document.getElementById('placeholder').style.display = 'block'; }
         setInterval(fetchDatabase, 8000);
         fetchDatabase();
     </script>

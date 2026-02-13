@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CODEX D'ARC | Enterprise Data Manager</title>
+    <title>DARK CODEX | Enterprise Data Manager</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -132,7 +132,7 @@
 </head>
 <body>
 
-    <header class="top-nav">CODEX D'ARC <span style="font-weight: 400; color: #a0aec0; margin-left: 5px;">| Enterprise Data Manager</span></header>
+    <header class="top-nav">DARK CODEX <span style="font-weight: 400; color: #a0aec0; margin-left: 5px;">| Enterprise Data Manager</span></header>
 
     <div class="container">
         <div id="overlay" onclick="toggleSidebar()"></div>
@@ -149,20 +149,20 @@
         <main class="main-content">
             <div id="placeholder" style="text-align: center;">
                 <i class="fas fa-search" style="font-size: 45px; color: var(--primary); margin-bottom: 10px;"></i>
-                <div style="color:var(--primary); font-size:12px; font-weight:800;">SYSTEM_READY</div>
-                <h2 style="font-weight: 800; font-size: 24px;">CODEX D'ARC</h2>
+                <div style="color:var(--primary); font-size:12px; font-weight:800;">SISTEMA_PRONTO</div>
+                <h2 style="font-weight: 800; font-size: 24px;">DARK CODEX</h2>
                 <p style="font-size: 9px; color: #a0aec0; letter-spacing: 1px;">SELECIONE UM ARQUIVO NA GAVETA</p>
             </div>
 
             <div class="report-card" id="reportCard">
                 <header class="report-header">
-                    <h3 style="font-size: 12px; font-weight: 800;">REPORT CARD</h3>
+                    <h3 style="font-size: 12px; font-weight: 800;">CARTÃO DE RELATÓRIO</h3>
                     <button style="background:#edf2f7; border:none; padding:6px 12px; border-radius:4px; font-size:9px; font-weight:800; cursor:pointer;" onclick="closeReport()">FECHAR</button>
                 </header>
                 <div class="report-body" id="scrollArea">
-                    <div class="search-noses-header"><i class="fas fa-search-plus"></i><div><span>Search_Noses</span><h2>CODEX D'ARC</h2></div></div>
+                    <div class="search-noses-header"><i class="fas fa-search-plus"></i><div><span>Busca_Noses</span><h2>DARK CODEX</h2></div></div>
                     <div id="reportContent"></div>
-                    <div class="official-footer"><h4>CODEX D'ARC</h4><span>MARCA OFICIAL</span></div>
+                    <div class="official-footer"><h4>DARK CODEX</h4><span>MARCA OFICIAL</span></div>
                 </div>
             </div>
         </main>
@@ -185,7 +185,7 @@
             }
         }
 
-        // SISTEMA DE GAVETA (RESTAURADO)
+        // --- SISTEMA DE GAVETA ---
         document.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; isDragging = false; isScrolling = false; }, { passive: true });
         document.addEventListener('touchmove', (e) => {
             const currentX = e.touches[0].clientX, currentY = e.touches[0].clientY;
@@ -224,7 +224,7 @@
                 const list = document.getElementById('file-list');
                 list.innerHTML = "";
                 data.reverse().forEach(item => {
-                    const label = item.nome || item.agente || "ID_" + item._id.slice(-4);
+                    const label = item.nome || item.agente || "IDENTIFICADOR_" + item._id.slice(-4);
                     const div = document.createElement('div');
                     div.className = 'file-item';
                     div.onclick = () => { renderParser(item); toggleSidebar(); };
@@ -241,68 +241,65 @@
             return v || '---';
         }
 
-        // TRADUTOR TOTAL E COMPLETO (BASEADO NOS PRINTS)
-        function expandLabel(text) {
+        // --- EXPANSOR TOTAL (NÃO PERMITE ABREVIAÇÕES EM NENHUMA PARTE) ---
+        function fullExpand(text) {
             if (!text) return "";
-            let up = text.replace(/_/g, ' ').toUpperCase().trim();
+            const t = text.replace(/_/g, ' ').toUpperCase().trim();
             const map = {
-                'ALT': 'ALTURA',
-                'PESO': 'PESO CORPORAL',
-                'PELE': 'COR DA PELE',
-                'TIPO FISICO': 'TIPO FÍSICO',
-                'OLHOS': 'COR DOS OLHOS',
-                'CABELO': 'COR DO CABELO',
-                'SINAIS': 'SINAIS E CICATRIZES',
-                'PASS': 'PASSAPORTE',
-                'PASSAPORTE': 'PASSAPORTE',
-                'CNH': 'CARTEIRA DE HABILITAÇÃO',
-                'BAIRRO': 'BAIRRO DE RESIDÊNCIA',
-                'ESCOLA': 'INSTITUIÇÃO DE ENSINO',
-                'CNH CAT': 'CATEGORIA DA HABILITAÇÃO',
-                'CNH_CAT': 'CATEGORIA DA HABILITAÇÃO',
-                'CNH SIT': 'SITUAÇÃO DA HABILITAÇÃO',
-                'CNH_SIT': 'SITUAÇÃO DA HABILITAÇÃO',
-                'INFO CARTAO': 'INFORMAÇÕES DO CARTÃO',
-                'INFO_CARTAO': 'INFORMAÇÕES DO CARTÃO',
-                'DET VEIC': 'DETALHES DO VEÍCULO',
-                'DET_VEIC': 'DETALHES DO VEÍCULO',
-                'NAMORO': 'ESTADO CIVIL',
-                'NAMORANDO': 'ESTADO CIVIL',
-                'COD': 'CÓDIGO DE IDENTIFICAÇÃO',
-                'NASC': 'DATA DE NASCIMENTO',
-                'NAT': 'NATURALIDADE',
-                'PROF': 'PROFISSÃO ATUAL',
-                'REL': 'RELACIONAMENTO',
-                'RELACIONAMENTO': 'RELACIONAMENTO',
-                'SINC': 'SINCRONIZAÇÃO'
+                'NAC': 'NACIONALIDADE', 'ALT': 'ALTURA', 'PROF': 'PROFISSÃO', 'NASC': 'DATA DE NASCIMENTO', 'NAT': 'NATURALIDADE',
+                'CAT': 'CATEGORIA', 'SINC': 'SINCRONIZAÇÃO', 'REL': 'RELACIONAMENTO', 'PASS': 'PASSAPORTE', 'COD': 'CÓDIGO DE IDENTIFICAÇÃO',
+                'DET VEIC': 'DETALHES DO VEÍCULO', 'INFO CARTAO': 'INFORMAÇÕES DO CARTÃO', 'CNH CAT': 'CATEGORIA DA HABILITAÇÃO',
+                'CNH SIT': 'SITUAÇÃO DA HABILITAÇÃO', 'CNH': 'CARTEIRA NACIONAL DE HABILITAÇÃO', 'PESO': 'PESO CORPORAL',
+                'PELE': 'PIGMENTAÇÃO DA PELE', 'OLHOS': 'COR DOS OLHOS', 'CABELO': 'TIPO DE CABELO', 'SINAIS': 'MARCAS E CICATRIZES',
+                'BAIRRO': 'BAIRRO DE RESIDÊNCIA', 'ESCOLA': 'INSTITUIÇÃO DE ENSINO', 'NAMORO': 'ESTADO CIVIL', 'DADO': 'VALOR REGISTRADO', 'INFO': 'INFORMAÇÃO DETALHADA'
             };
-            return map[up] || up;
+            return map[t] || t;
         }
 
         function renderParser(user) {
             document.getElementById('placeholder').style.display = 'none';
             document.getElementById('reportCard').style.display = 'flex';
             const container = document.getElementById('reportContent');
-            let html = `<div class="section-header-styled">DADOS DO REGISTRO</div>`;
+            
+            let html = `<div class="section-header-styled">IDENTIFICAÇÃO PRINCIPAL</div>
+                        <div class="data-box-container">
+                            <div class="data-row"><span>AGENTE RESPONSÁVEL</span><span>${user.agente || user.nome || 'NÃO IDENTIFICADO'}</span></div>
+                            <div class="data-row"><span>SINCRONIZAÇÃO</span><span>${user.hora || '--:--'}</span></div>
+                        </div>`;
 
             Object.entries(user).forEach(([key, value]) => {
                 if (['__v', '_id', 'hora', 'nome', 'agente'].includes(key)) return;
-                let label = expandLabel(key);
+                
                 if (typeof value === 'string' && value.includes('{')) {
                     try {
-                        const parsed = JSON.parse(value.match(/\{.*\}/)[0]);
-                        html += `<div class="section-header-styled">${label}</div><div class="data-box-container">`;
-                        Object.entries(parsed).forEach(([sKey, sVal]) => {
-                            html += `<div class="data-row"><span>${expandLabel(sKey)}</span><span>${formatVal(sVal)}</span></div>`;
-                        });
-                        html += `</div>`;
+                        const jsonMatch = value.match(/\{.*\}/);
+                        if (jsonMatch) {
+                            const parsed = JSON.parse(jsonMatch[0]);
+                            html += `<div class="section-header-styled">${fullExpand(key)} DETALHADO</div>
+                                     <div class="data-box-container">`;
+                            Object.entries(parsed).forEach(([sKey, sVal]) => {
+                                if (typeof sVal === 'object' && sVal !== null) {
+                                    Object.entries(sVal).forEach(([k, v]) => {
+                                        html += `<div class="data-row"><span>${fullExpand(k)}</span><span>${formatVal(v)}</span></div>`;
+                                    });
+                                } else {
+                                    html += `<div class="data-row"><span>${fullExpand(sKey)}</span><span>${formatVal(sVal)}</span></div>`;
+                                }
+                            });
+                            html += `</div>`;
+                        }
                     } catch (e) {
-                        html += `<div class="section-header-styled">${label}</div><div class="data-box-container"><div class="data-row"><span>INFORMAÇÃO</span><span>${formatVal(value)}</span></div></div>`;
+                        html += `<div class="section-header-styled">${fullExpand(key)}</div>
+                                 <div class="data-box-container"><div class="data-row"><span>REGISTRO</span><span>${formatVal(value)}</span></div></div>`;
                     }
                 } else {
-                    html += `<div class="section-header-styled">${label}</div><div class="data-box-container"><div class="data-row"><span>INFORMAÇÃO</span><span>${formatVal(value)}</span></div></div>`;
+                    html += `<div class="section-header-styled">${fullExpand(key)}</div>
+                             <div class="data-box-container">
+                                <div class="data-row"><span>REGISTRO</span><span>${formatVal(value)}</span></div>
+                             </div>`;
                 }
             });
+
             container.innerHTML = html;
             document.getElementById('scrollArea').scrollTop = 0;
         }

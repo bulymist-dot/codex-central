@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DARK CODEX | Enterprise Data Manager</title>
+    <title>D'ARC CODEX | Enterprise Data Manager</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -132,7 +132,7 @@
 </head>
 <body>
 
-    <header class="top-nav">DARK CODEX <span style="font-weight: 400; color: #a0aec0; margin-left: 5px;">| Enterprise Data Manager</span></header>
+    <header class="top-nav">D'ARC CODEX <span style="font-weight: 400; color: #a0aec0; margin-left: 5px;">| Enterprise Data Manager</span></header>
 
     <div class="container">
         <div id="overlay" onclick="toggleSidebar()"></div>
@@ -150,7 +150,7 @@
             <div id="placeholder" style="text-align: center;">
                 <i class="fas fa-search" style="font-size: 45px; color: var(--primary); margin-bottom: 10px;"></i>
                 <div style="color:var(--primary); font-size:12px; font-weight:800;">SISTEMA_PRONTO</div>
-                <h2 style="font-weight: 800; font-size: 24px;">DARK CODEX</h2>
+                <h2 style="font-weight: 800; font-size: 24px;">D'ARC CODEX</h2>
                 <p style="font-size: 9px; color: #a0aec0; letter-spacing: 1px;">SELECIONE UM ARQUIVO NA GAVETA</p>
             </div>
 
@@ -160,9 +160,9 @@
                     <button style="background:#edf2f7; border:none; padding:6px 12px; border-radius:4px; font-size:9px; font-weight:800; cursor:pointer;" onclick="closeReport()">FECHAR</button>
                 </header>
                 <div class="report-body" id="scrollArea">
-                    <div class="search-noses-header"><i class="fas fa-search-plus"></i><div><span>Busca_Noses</span><h2>DARK CODEX</h2></div></div>
+                    <div class="search-noses-header"><i class="fas fa-search-plus"></i><div><span>Busca_Noses</span><h2>D'ARC CODEX</h2></div></div>
                     <div id="reportContent"></div>
-                    <div class="official-footer"><h4>DARK CODEX</h4><span>MARCA OFICIAL</span></div>
+                    <div class="official-footer"><h4>D'ARC CODEX</h4><span>MARCA OFICIAL</span></div>
                 </div>
             </div>
         </main>
@@ -241,7 +241,7 @@
             return v || '---';
         }
 
-        // --- EXPANSOR TOTAL (NÃO PERMITE ABREVIAÇÕES EM NENHUMA PARTE) ---
+        // --- EXPANSOR TOTAL (SEM ABREVIAÇÕES) ---
         function fullExpand(text) {
             if (!text) return "";
             const t = text.replace(/_/g, ' ').toUpperCase().trim();

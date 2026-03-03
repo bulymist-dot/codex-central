@@ -12,6 +12,11 @@
             --primary: #00d4ff;
             --bg-page: #ebf1f5;
             --border: #e2e8f0;
+            --sucesso: #48bb78;
+            --erro: #f56565;
+            --note-bg: #e6f7ff;
+            --note-border: #91d5ff;
+            --note-text: #0050b3;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -31,18 +36,11 @@
             100% { filter: brightness(1); }
         }
 
-        .fa-search, .fa-search-plus, .drawer-handle, .file-item i, .search-noses-header i, .data-box-container {
+        .fa-search, .fa-search-plus, .drawer-handle, .search-noses-header i {
             animation: lightShine 4.5s infinite ease-in-out;
-            will-change: filter;
         }
 
-        .status-box {
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 22px; height: 22px; border-radius: 4px; font-size: 14px; color: white; font-weight: 900;
-        }
-        .status-true { background: #48bb78; }
-        .status-false { background: #f56565; }
-
+        /* TOP NAV */
         .top-nav {
             padding: 12px 20px; background: #fff; font-weight: 800; font-size: 13px;
             border-bottom: 1px solid var(--border); z-index: 100;
@@ -50,84 +48,119 @@
 
         .container { display: flex; flex: 1; position: relative; overflow: hidden; }
 
+        /* GAVETA LATERAL */
         .drawer {
             position: absolute; top: 0; left: 0; width: 200px; height: 100%;
             background: var(--bg-page); padding: 15px; z-index: 2000;
             transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px;
         }
-
         .drawer.open { transform: translateX(0); }
-
         .drawer-handle {
             position: absolute; right: -38px; top: 20px; width: 34px; height: 34px; 
             background: var(--primary); display: flex; align-items: center; justify-content: center;
             cursor: pointer; border-radius: 50%; color: white;
             box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1); font-size: 12px; border: 2px solid white; z-index: 2001;
         }
-
         .drawer-header-box {
             background: white; padding: 10px; border-radius: 8px; font-size: 11px;
             font-weight: 800; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-transform: uppercase;
         }
-
         .search-box { position: relative; margin-bottom: 5px; }
         .search-box input {
             width: 100%; padding: 10px 35px 10px 12px; border-radius: 8px;
             border: 1px solid var(--border); font-size: 11px; font-weight: 600; outline: none;
         }
         .search-box i { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--primary); }
-
         #file-list { overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-
         .file-item {
             background: white; padding: 12px; border-radius: 10px; display: flex;
             align-items: center; gap: 10px; cursor: pointer; font-size: 10px; font-weight: 700; text-transform: uppercase;
         }
-
         .file-item i { color: var(--primary); font-size: 18px; }
 
+        /* MAIN CONTENT */
         .main-content { flex: 1; padding: 10px; display: flex; justify-content: center; align-items: center; overflow: hidden; }
 
+        /* CARTÃO DE RELATÓRIO */
         .report-card {
             width: 100%; height: 90vh; background: white; border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: none; flex-direction: column; overflow: hidden;
             animation: fadeIn 0.4s ease;
         }
-
         .report-header { padding: 15px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
-
         .report-body { flex: 1; padding: 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 
-        .search-noses-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
-        .search-noses-header i { color: var(--primary); font-size: 32px; }
-        .search-noses-header h2 { font-size: 20px; font-weight: 800; line-height: 1; }
-        .search-noses-header span { color: var(--primary); font-size: 12px; font-weight: 800; display: block; }
+        /* TABS */
+        .tabs-container {
+            display: flex; overflow-x: auto; gap: 5px; padding: 10px 20px;
+            background: #f8fafc; border-bottom: 1px solid var(--border);
+            scrollbar-width: none;
+        }
+        .tab-btn {
+            padding: 8px 15px; border-radius: 6px; border: 1px solid var(--border);
+            background: white; color: #718096; font-size: 10px; font-weight: 800;
+            text-transform: uppercase; cursor: pointer; white-space: nowrap; transition: 0.2s;
+        }
+        .tab-btn.active {
+            background: var(--primary); color: white; border-color: var(--primary);
+            box-shadow: 0 4px 10px rgba(0, 212, 255, 0.3);
+        }
 
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+        /* DATA STYLING */
         .section-header-styled {
             background: #edf2f7; padding: 6px 12px; border-radius: 4px;
-            display: inline-block; font-size: 10px; font-weight: 800; color: #4a5568; text-transform: uppercase; margin: 15px 0 10px 0;
+            display: inline-block; font-size: 10px; font-weight: 800; color: #4a5568; 
+            text-transform: uppercase; margin: 15px 0 5px 0;
+            border-left: 4px solid var(--primary);
         }
-
-        .data-box-container { border-left: 4px solid var(--primary); background: #fcfdfe; margin-bottom: 15px; }
-
+        .data-box-container { border: 1px solid var(--border); background: #fcfdfe; margin-bottom: 12px; border-radius: 8px; overflow: hidden; }
         .data-row {
-            display: flex; justify-content: space-between; align-items: center; padding: 12px 15px;
+            display: flex; justify-content: space-between; align-items: center; padding: 10px 15px;
             border-bottom: 1px solid #f1f5f9; font-size: 11px; font-weight: 700;
         }
+        .data-row:last-child { border-bottom: none; }
+        .data-row span:first-child { color: #718096; font-size: 9px; text-transform: uppercase; }
+        
+        .status-box {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 20px; height: 20px; border-radius: 4px; font-size: 12px; color: white; font-weight: 900;
+            margin-left: 8px;
+        }
+        .status-true { background: var(--sucesso); box-shadow: 0 0 8px rgba(72, 187, 120, 0.4); }
+        .status-false { background: var(--erro); box-shadow: 0 0 8px rgba(245, 101, 101, 0.4); }
 
-        .data-row span:last-child { color: #4a5568; text-align: right; max-width: 60%; word-break: break-all; }
-
-        .official-footer { margin-top: 40px; padding: 20px 0; text-align: center; border-top: 1px dashed var(--border); }
-        .official-footer h4 { font-size: 16px; font-weight: 900; letter-spacing: 2px; color: #2d3748; }
-        .official-footer span { font-size: 9px; color: var(--primary); font-weight: 800; }
-
-        #overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.3); z-index: 1999; display: none; opacity: 0; transition: opacity 0.3s ease;
+        .data-row span:last-child { 
+            color: #2d3748; text-align: right; max-width: 65%; word-break: break-all;
+            display: flex; align-items: center; justify-content: flex-end;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* FOTO */
+        .foto-container { width: 100%; display: flex; justify-content: center; padding: 10px 0 20px 0; }
+        .foto-perfil {
+            width: 130px; height: 130px; border-radius: 50%; border: 4px solid var(--primary);
+            object-fit: cover; box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+
+        /* ANNOTATION BOX */
+        .annotation-box {
+            background: var(--note-bg); border: 1px solid var(--note-border); border-radius: 8px; padding: 15px;
+            margin-top: 20px; position: relative;
+        }
+        .annotation-box::before { 
+            content: 'NOTAS_EXTRAS_ARP'; position: absolute; top: -8px; left: 10px; 
+            background: var(--primary); color: white; font-size: 8px; font-weight: 900; padding: 2px 6px; border-radius: 3px; 
+        }
+        .annotation-box textarea {
+            width: 100%; height: 100px; border: none; background: transparent;
+            font-size: 11px; font-weight: 600; outline: none; resize: none; color: var(--note-text);
+        }
+
+        #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 1999; display: none; opacity: 0; transition: 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -159,10 +192,26 @@
                     <h3 style="font-size: 12px; font-weight: 800;">CARTÃO DE RELATÓRIO</h3>
                     <button style="background:#edf2f7; border:none; padding:6px 12px; border-radius:4px; font-size:9px; font-weight:800; cursor:pointer;" onclick="closeReport()">FECHAR</button>
                 </header>
+                
+                <div class="tabs-container" id="tabsHeader">
+                    <div class="tab-btn active" onclick="switchTab('identificacao', this)">Identificação</div>
+                    <div class="tab-btn" onclick="switchTab('tecnico', this)">Dados Técnicos</div>
+                </div>
+
                 <div class="report-body" id="scrollArea">
-                    <div class="search-noses-header"><i class="fas fa-search-plus"></i><div><span>Busca_Noses</span><h2>D'ARC CODEX</h2></div></div>
-                    <div id="reportContent"></div>
-                    <div class="official-footer"><h4>D'ARC CODEX</h4><span>MARCA OFICIAL</span></div>
+                    <div id="fotoArea"></div>
+                    <div class="search-noses-header" style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
+                        <i class="fas fa-search-plus" style="color:var(--primary); font-size:32px;"></i>
+                        <div><span style="color:var(--primary); font-size:11px; font-weight:800;">Busca_Noses</span><h2 style="font-size:18px; font-weight:800;">D'ARC CODEX</h2></div>
+                    </div>
+                    
+                    <div id="tab-identificacao" class="tab-content active"></div>
+                    <div id="tab-tecnico" class="tab-content"></div>
+
+                    <div class="annotation-box">
+                        <textarea id="extraNotes" placeholder="ADICIONE OBSERVAÇÕES DE CAMPO AQUI..."></textarea>
+                        <div id="saveStatus" style="font-size: 8px; color: var(--note-text); margin-top: 5px; font-weight: 900; opacity: 0.6;">AGUARDANDO...</div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -173,48 +222,76 @@
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
         const handleIcon = document.getElementById('handleIcon');
-        
-        let startX = 0, startY = 0, isDragging = false, isScrolling = false;
-
-        function filterAgents() {
-            const input = document.getElementById('searchAgents').value.toLowerCase();
-            const items = document.getElementsByClassName('file-item');
-            for (let i = 0; i < items.length; i++) {
-                const text = items[i].getElementsByTagName('span')[0].innerText.toLowerCase();
-                items[i].style.display = text.includes(input) ? "flex" : "none";
-            }
-        }
-
-        // --- SISTEMA DE GAVETA ---
-        document.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; isDragging = false; isScrolling = false; }, { passive: true });
-        document.addEventListener('touchmove', (e) => {
-            const currentX = e.touches[0].clientX, currentY = e.touches[0].clientY;
-            const diffX = currentX - startX, diffY = currentY - startY;
-            if (!isDragging && Math.abs(diffY) > Math.abs(diffX)) { isScrolling = true; return; }
-            if (Math.abs(diffX) > 10 && !isScrolling) {
-                isDragging = true; sidebar.style.transition = 'none';
-                let offset = sidebar.classList.contains('open') ? diffX : -200 + diffX;
-                if (offset > 0) offset = 0; if (offset < -200) offset = -200;
-                sidebar.style.transform = `translateX(${offset}px)`;
-                overlay.style.display = 'block'; overlay.style.opacity = (200 + offset) / 200;
-                if(e.cancelable) e.preventDefault();
-            }
-        }, { passive: false });
-
-        document.addEventListener('touchend', (e) => {
-            if (!isDragging) return; isDragging = false; sidebar.style.transition = 'transform 0.3s ease';
-            const x = parseInt(window.getComputedStyle(sidebar).transform.split(',')[4]) || -200;
-            if (x > -100) { sidebar.classList.add('open'); sidebar.style.transform = 'translateX(0)'; overlay.style.opacity = '1'; handleIcon.className = "fas fa-chevron-left"; }
-            else { sidebar.classList.remove('open'); sidebar.style.transform = 'translateX(-100%)'; overlay.style.opacity = '0'; handleIcon.className = "fas fa-chevron-right"; setTimeout(() => { if(!sidebar.classList.contains('open')) overlay.style.display = 'none'; }, 300); }
-        });
+        let currentUserId = null;
+        let notesTimeout = null;
 
         function toggleSidebar() {
-            sidebar.style.transition = 'transform 0.3s ease';
             const isOpen = sidebar.classList.toggle('open');
             sidebar.style.transform = isOpen ? 'translateX(0)' : 'translateX(-100%)';
             overlay.style.display = isOpen ? 'block' : 'none';
             setTimeout(() => { overlay.style.opacity = isOpen ? '1' : '0'; }, 10);
             handleIcon.className = isOpen ? "fas fa-chevron-left" : "fas fa-chevron-right";
+        }
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            btn.classList.add('active');
+            document.getElementById('scrollArea').scrollTop = 0;
+        }
+
+        function filterAgents() {
+            const input = document.getElementById('searchAgents').value.toLowerCase();
+            const items = document.getElementsByClassName('file-item');
+            for (let i = 0; i < items.length; i++) {
+                const text = items[i].innerText.toLowerCase();
+                items[i].style.display = text.includes(input) ? "flex" : "none";
+            }
+        }
+
+        function formatVal(v) {
+            const val = String(v).toLowerCase().trim();
+            if (v === true || val === 'true' || val === 'sim' || val === 'ok' || val === 'ativo') {
+                return `SIM <div class="status-box status-true">V</div>`;
+            }
+            if (v === false || val === 'false' || val === 'não' || val === 'inativo' || val === 'cancelado') {
+                return `NÃO <div class="status-box status-false">X</div>`;
+            }
+            return v !== undefined && v !== null && v !== "" ? String(v) : '---';
+        }
+
+        function fullExpand(text) {
+            if (!text) return "";
+            const t = text.replace(/_/g, ' ').toUpperCase().trim();
+            const map = {
+                'CAT': 'HABILITAÇÃO', 'SIT': 'SITUAÇÃO', 'CNH': 'CARTEIRA NACIONAL',
+                'NAC': 'NACIONALIDADE', 'ALT': 'ALTURA', 'PROF': 'PROFISSÃO', 'NASC': 'NASCIMENTO',
+                'NAT': 'NATURALIDADE', 'PASS': 'PASSAPORTE', 'COD': 'CODINOME', 'PESO': 'PESO',
+                'PELE': 'COR DA PELE', 'OLHOS': 'COR DOS OLHOS', 'CABELO': 'CABELO', 'SINAIS': 'SINAIS PARTICULARES',
+                'BAIRRO': 'BAIRRO', 'ESCOLA': 'ESCOLARIDADE', 'NAMORO': 'ESTADO CIVIL', 
+                '_ID': 'ID INTERNO', 'CREATEDAT': 'DATA DE REGISTRO', 'UPDATEDAT': 'ÚLTIMA ATUALIZAÇÃO'
+            };
+            return map[t] || t;
+        }
+
+        function createDataBlock(key, value) {
+            if (!value || value === "---") return "";
+            let innerHtml = '';
+            if (typeof value === 'string' && (value.includes(':') || value.includes('\n'))) {
+                const lines = value.split('\n');
+                lines.forEach(line => {
+                    if(line.includes(':')) {
+                        const [k, v] = line.split(':');
+                        innerHtml += `<div class="data-row"><span>${fullExpand(k)}</span><span>${formatVal(v)}</span></div>`;
+                    } else if(line.trim() !== "") {
+                        innerHtml += `<div class="data-row"><span>DETALHE</span><span>${formatVal(line)}</span></div>`;
+                    }
+                });
+            } else {
+                innerHtml = `<div class="data-row"><span>VALOR</span><span>${formatVal(value)}</span></div>`;
+            }
+            return `<div class="section-header-styled">${fullExpand(key)}</div><div class="data-box-container">${innerHtml}</div>`;
         }
 
         async function fetchDatabase() {
@@ -224,88 +301,76 @@
                 const list = document.getElementById('file-list');
                 list.innerHTML = "";
                 data.reverse().forEach(item => {
-                    const label = item.nome || item.agente || "IDENTIFICADOR_" + item._id.slice(-4);
+                    const label = item.nome || item.agente || "ID_" + item._id.slice(-4);
                     const div = document.createElement('div');
                     div.className = 'file-item';
                     div.onclick = () => { renderParser(item); toggleSidebar(); };
                     div.innerHTML = `<i class="fas fa-id-card"></i><span>${label}</span>`;
                     list.appendChild(div);
                 });
-                filterAgents();
             } catch (e) { console.error("OFFLINE"); }
         }
 
-        function formatVal(v) {
-            if (v === true || String(v).toLowerCase() === 'true') return `<div class="status-box status-true">V</div>`;
-            if (v === false || String(v).toLowerCase() === 'false') return `<div class="status-box status-false">X</div>`;
-            return v || '---';
-        }
-
-        // --- EXPANSOR TOTAL (SEM ABREVIAÇÕES) ---
-        function fullExpand(text) {
-            if (!text) return "";
-            const t = text.replace(/_/g, ' ').toUpperCase().trim();
-            const map = {
-                'NAC': 'NACIONALIDADE', 'ALT': 'ALTURA', 'PROF': 'PROFISSÃO', 'NASC': 'DATA DE NASCIMENTO', 'NAT': 'NATURALIDADE',
-                'CAT': 'CATEGORIA', 'SINC': 'SINCRONIZAÇÃO', 'REL': 'RELACIONAMENTO', 'PASS': 'PASSAPORTE', 'COD': 'CÓDIGO DE IDENTIFICAÇÃO',
-                'DET VEIC': 'DETALHES DO VEÍCULO', 'INFO CARTAO': 'INFORMAÇÕES DO CARTÃO', 'CNH CAT': 'CATEGORIA DA HABILITAÇÃO',
-                'CNH SIT': 'SITUAÇÃO DA HABILITAÇÃO', 'CNH': 'CARTEIRA NACIONAL DE HABILITAÇÃO', 'PESO': 'PESO CORPORAL',
-                'PELE': 'PIGMENTAÇÃO DA PELE', 'OLHOS': 'COR DOS OLHOS', 'CABELO': 'TIPO DE CABELO', 'SINAIS': 'MARCAS E CICATRIZES',
-                'BAIRRO': 'BAIRRO DE RESIDÊNCIA', 'ESCOLA': 'INSTITUIÇÃO DE ENSINO', 'NAMORO': 'ESTADO CIVIL', 'DADO': 'VALOR REGISTRADO', 'INFO': 'INFORMAÇÃO DETALHADA'
-            };
-            return map[t] || t;
-        }
-
         function renderParser(user) {
+            // 1. LIMPEZA TOTAL ANTES DE CARREGAR
+            currentUserId = user._id;
+            const extraNotes = document.getElementById('extraNotes');
+            const saveStatus = document.getElementById('saveStatus');
+            
+            // Forçamos o campo a ficar vazio antes de injetar o novo valor
+            extraNotes.value = ""; 
+            saveStatus.innerText = "LENDO CODEX...";
+
             document.getElementById('placeholder').style.display = 'none';
             document.getElementById('reportCard').style.display = 'flex';
-            const container = document.getElementById('reportContent');
             
-            let html = `<div class="section-header-styled">IDENTIFICAÇÃO PRINCIPAL</div>
-                        <div class="data-box-container">
-                            <div class="data-row"><span>AGENTE RESPONSÁVEL</span><span>${user.agente || user.nome || 'NÃO IDENTIFICADO'}</span></div>
-                            <div class="data-row"><span>SINCRONIZAÇÃO</span><span>${user.hora || '--:--'}</span></div>
-                        </div>`;
+            // Foto
+            let fotoUrl = user.foto || "";
+            const match = JSON.stringify(user).match(/https?:\/\/[^\s"]+\.(jpg|jpeg|png|webp)/i);
+            if (match && !fotoUrl) fotoUrl = match[0];
+            document.getElementById('fotoArea').innerHTML = fotoUrl ? `<div class="foto-container"><img src="${fotoUrl}" class="foto-perfil"></div>` : "";
 
+            // Abas
+            let htmlAba1 = "";
+            const nomeKey = user.nome ? 'nome' : (user.agente ? 'agente' : null);
+            if (nomeKey) htmlAba1 = createDataBlock(nomeKey, user[nomeKey]);
+
+            let htmlAba2 = "";
+            const ignoreInAba2 = [nomeKey, 'foto', 'notas', '__v'];
             Object.entries(user).forEach(([key, value]) => {
-                if (['__v', '_id', 'hora', 'nome', 'agente'].includes(key)) return;
-                
-                if (typeof value === 'string' && value.includes('{')) {
-                    try {
-                        const jsonMatch = value.match(/\{.*\}/);
-                        if (jsonMatch) {
-                            const parsed = JSON.parse(jsonMatch[0]);
-                            html += `<div class="section-header-styled">${fullExpand(key)} DETALHADO</div>
-                                     <div class="data-box-container">`;
-                            Object.entries(parsed).forEach(([sKey, sVal]) => {
-                                if (typeof sVal === 'object' && sVal !== null) {
-                                    Object.entries(sVal).forEach(([k, v]) => {
-                                        html += `<div class="data-row"><span>${fullExpand(k)}</span><span>${formatVal(v)}</span></div>`;
-                                    });
-                                } else {
-                                    html += `<div class="data-row"><span>${fullExpand(sKey)}</span><span>${formatVal(sVal)}</span></div>`;
-                                }
-                            });
-                            html += `</div>`;
-                        }
-                    } catch (e) {
-                        html += `<div class="section-header-styled">${fullExpand(key)}</div>
-                                 <div class="data-box-container"><div class="data-row"><span>REGISTRO</span><span>${formatVal(value)}</span></div></div>`;
-                    }
-                } else {
-                    html += `<div class="section-header-styled">${fullExpand(key)}</div>
-                             <div class="data-box-container">
-                                <div class="data-row"><span>REGISTRO</span><span>${formatVal(value)}</span></div>
-                             </div>`;
+                if (!ignoreInAba2.includes(key.toLowerCase()) && value) {
+                    htmlAba2 += createDataBlock(key, value);
                 }
             });
 
-            container.innerHTML = html;
-            document.getElementById('scrollArea').scrollTop = 0;
+            document.getElementById('tab-identificacao').innerHTML = htmlAba1 || "<p style='padding:20px; font-size:10px; color:#a0aec0;'>Nenhum nome registrado.</p>";
+            document.getElementById('tab-tecnico').innerHTML = htmlAba2 || "<p style='padding:20px; font-size:10px; color:#a0aec0;'>Nenhum dado técnico adicional.</p>";
+
+            // 2. RECUPERAÇÃO DA NOTA ESPECÍFICA (ID ISOLADO)
+            const uniqueKey = "notes_" + currentUserId;
+            const savedNote = localStorage.getItem(uniqueKey);
+            
+            // Prioridade: Nota salva localmente para este ID > Nota do Banco de Dados > Vazio
+            extraNotes.value = savedNote || user.notas || "";
+            saveStatus.innerText = "NOTAS CARREGADAS";
+
+            // 3. SALVAMENTO ISOLADO
+            extraNotes.oninput = () => {
+                clearTimeout(notesTimeout);
+                saveStatus.innerText = "SINCRONIZANDO...";
+                
+                notesTimeout = setTimeout(() => {
+                    localStorage.setItem(uniqueKey, extraNotes.value);
+                    saveStatus.innerText = "SALVO NO PERFIL " + currentUserId.slice(-4).toUpperCase();
+                }, 700);
+            };
+            
+            switchTab('identificacao', document.querySelector('.tab-btn'));
         }
 
         function closeReport() { document.getElementById('reportCard').style.display = 'none'; document.getElementById('placeholder').style.display = 'block'; }
-        setInterval(fetchDatabase, 8000);
+        
+        setInterval(fetchDatabase, 15000);
         fetchDatabase();
     </script>
 </body>

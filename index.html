@@ -63,6 +63,10 @@
         #sucesso-final { display: none; text-align: center; padding: 40px; }
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 999; }
         .overlay.active { display: block; }
+
+        .foto-perfil-container { text-align: center; margin-bottom: 20px; position: relative; }
+        #preview-foto { width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--azul-claro); object-fit: cover; cursor: pointer; background: #f1f5f9; }
+        .foto-status { font-size: 9px; font-weight: bold; color: var(--azul-claro); margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -96,6 +100,13 @@
 
                 <div class="card active-card" id="card-ident">
                     <h2>🧾 IDENTIFICAÇÃO</h2>
+                    
+                    <div class="foto-perfil-container">
+                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" id="preview-foto" onclick="document.getElementById('fileInput').click()">
+                        <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="uploadFotoCloudinary(this)">
+                        <div class="foto-status" id="foto-info">TOQUE PARA ADICIONAR FOTO</div>
+                    </div>
+
                     <div class="input-group"><label>Nome Completo</label><input type="text" id="nome" class="req"></div>
                     <div class="input-group"><label>Codinome (Para Reconhecimento)</label><input type="text" id="cod" class="req"></div>
                     <div class="row">
@@ -110,16 +121,23 @@
                         <div class="input-group"><label>Profissão</label><input type="text" id="prof" class="req"></div>
                         <div class="input-group"><label>Religião</label><input type="text" id="rel" class="req"></div>
                     </div>
-                    <div class="check-container">
-                        <label>Está Namorando?</label>
-                        <div class="check-row">
-                            <div class="btn-check" id="nam-s" onclick="setSimpleCheck('namoro', 'sim', 'sub-namoro')">SIM</div>
-                            <div class="btn-check" id="nam-n" onclick="setSimpleCheck('namoro', 'nao', 'sub-namoro')">NÃO</div>
-                        </div>
-                        <div id="sub-namoro" class="sub-secao">
-                            <label>Nome do Parceiro(a)</label><input type="text" id="nome_parceiro">
-                        </div>
+                    
+                    <div class="input-group">
+                        <label>Estado Civil / Relacionamento</label>
+                        <select id="estado_civil" onchange="checkRelacionamento(this.value)">
+                            <option value="Solteiro(a)">Solteiro(a)</option>
+                            <option value="Namorando">Namorando</option>
+                            <option value="Noivo(a)">Noivo(a)</option>
+                            <option value="Casado(a)">Casado(a)</option>
+                            <option value="Divorciado(a)">Divorciado(a)</option>
+                            <option value="Viúvo(a)">Viúvo(a)</option>
+                        </select>
                     </div>
+
+                    <div id="sub-relacionamento" class="sub-secao">
+                        <label>Nome do Parceiro(a)</label><input type="text" id="nome_parceiro">
+                    </div>
+
                     <button class="btn-registrar" onclick="proximo('card-ident', 'card-fisico', 'IDENTIFICAÇÃO')">Próxima Etapa</button>
                 </div>
 
@@ -133,10 +151,10 @@
                         <div class="input-group"><label>Cor da Pele</label><input type="text" id="pele" class="req"></div>
                         <div class="input-group"><label>Tipo Físico</label>
                             <select id="tipo_fisico">
-                                <option value="Ectomorfo">Magro / Ectomorfo</option>
-                                <option value="Mesomorfo">Atlético / Mesomorfo</option>
-                                <option value="Endomorfo">Robusto / Endomorfo</option>
-                                <option value="Mediano">Misto / Mediano</option>
+                                <option value="Magro / Ectomorfo">Magro / Ectomorfo</option>
+                                <option value="Atlético / Mesomorfo">Atlético / Mesomorfo</option>
+                                <option value="Robusto / Endomorfo">Robusto / Endomorfo</option>
+                                <option value="Misto / Mediano">Misto / Mediano</option>
                             </select>
                         </div>
                     </div>
@@ -156,31 +174,36 @@
                         <div class="input-group"><label>Bairro</label><input type="text" id="bairro" class="req"></div>
                         <div class="input-group"><label>Escolaridade</label><input type="text" id="escola" class="req"></div>
                     </div>
+                    
                     <div class="row">
-                        <div class="check-container" style="flex:1"><label>Passaporte?</label>
-                            <div class="check-row">
-                                <div class="btn-check" id="pass-s" onclick="setSimpleCheck('pass', 'sim')">SIM</div>
-                                <div class="btn-check" id="pass-n" onclick="setSimpleCheck('pass', 'nao')">NÃO</div>
-                            </div>
+                        <div class="input-group">
+                            <label>Possui Passaporte?</label>
+                            <select id="passaporte">
+                                <option value="Não">Não</option>
+                                <option value="Sim">Sim</option>
+                            </select>
                         </div>
-                        <div class="check-container" style="flex:1"><label>CNH?</label>
-                            <div class="check-row">
-                                <div class="btn-check" id="cnh-s" onclick="setSimpleCheck('cnh', 'sim', 'sub-cnh')">SIM</div>
-                                <div class="btn-check" id="cnh-n" onclick="setSimpleCheck('cnh', 'nao', 'sub-cnh')">NÃO</div>
-                            </div>
+                        <div class="input-group">
+                            <label>Possui CNH?</label>
+                            <select id="cnh" onchange="checkCNH(this.value)">
+                                <option value="Não">Não</option>
+                                <option value="Sim">Sim</option>
+                            </select>
                         </div>
                     </div>
+
                     <div id="sub-cnh" class="sub-secao">
                         <label>Categorias</label><input type="text" id="cnh_cat">
                         <label>Situação</label><input type="text" id="cnh_sit">
                     </div>
+
                     <div class="check-container"><label>🚦 Meios de Transporte:</label>
                         <div class="check-row">
-                            <div class="btn-check" id="t-car" onclick="toggleT('carro')">CARRO</div>
-                            <div class="btn-check" id="t-mot" onclick="toggleT('moto')">MOTO</div>
-                            <div class="btn-check" id="t-bik" onclick="toggleT('bike')">BIKE</div>
-                            <div class="btn-check" id="t-bar" onclick="toggleT('barco')">BARCO</div>
-                            <div class="btn-check" id="t-ct" onclick="toggleT('cartao', 'sub-cartao')">CARTÃO</div>
+                            <div class="btn-check" id="t-car" onclick="toggleT('Carro')">CARRO</div>
+                            <div class="btn-check" id="t-mot" onclick="toggleT('Moto')">MOTO</div>
+                            <div class="btn-check" id="t-bik" onclick="toggleT('Bicicleta')">BIKE</div>
+                            <div class="btn-check" id="t-bar" onclick="toggleT('Barco')">BARCO</div>
+                            <div class="btn-check" id="t-ct" onclick="toggleT('Cartão Transporte', 'sub-cartao')">CARTÃO</div>
                         </div>
                     </div>
                     <div id="sub-cartao" class="sub-secao">
@@ -194,21 +217,44 @@
     </div>
 
     <script>
-        let db = { transportes: {} };
+        let db = { transportes: {}, urlFoto: "" };
         const SERVIDOR = "https://codex-darc.onrender.com";
+        const CLOUD_NAME = "dmjnmsqrx";
+        const UPLOAD_PRESET = "upojjqfg";
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('open');
             document.getElementById('overlay').classList.toggle('active');
         }
 
-        function setSimpleCheck(key, val, subId) {
-            db[key] = val;
-            const btn = event.target;
-            const parent = btn.parentElement;
-            parent.querySelectorAll('.btn-check').forEach(b => b.classList.remove('active-sim', 'active-nao'));
-            btn.classList.add(val === 'sim' ? 'active-sim' : 'active-nao');
-            if(subId) document.getElementById(subId).style.display = (val === 'sim' ? 'block' : 'none');
+        async function uploadFotoCloudinary(input) {
+            if (!input.files || !input.files[0]) return;
+            const info = document.getElementById('foto-info');
+            info.innerText = "⏳ SUBINDO...";
+            const formData = new FormData();
+            formData.append("file", input.files[0]);
+            formData.append("upload_preset", UPLOAD_PRESET);
+            try {
+                const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+                    method: "POST",
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.secure_url) {
+                    db.urlFoto = data.secure_url;
+                    document.getElementById('preview-foto').src = data.secure_url;
+                    info.innerText = "✅ FOTO SINCRONIZADA";
+                }
+            } catch (e) { info.innerText = "❌ ERRO NO UPLOAD"; }
+        }
+
+        function checkRelacionamento(val) {
+            const sub = document.getElementById('sub-relacionamento');
+            sub.style.display = (val !== 'Solteiro(a)' && val !== 'Divorciado(a)' && val !== 'Viúvo(a)') ? 'block' : 'none';
+        }
+
+        function checkCNH(val) {
+            document.getElementById('sub-cnh').style.display = (val === 'Sim' ? 'block' : 'none');
         }
 
         function toggleT(tipo, subId) {
@@ -225,6 +271,11 @@
                 if(!i.value.trim()) { i.classList.add('campo-erro'); erro = true; }
                 else { i.classList.remove('campo-erro'); }
             });
+            if(atual === 'card-ident' && !db.urlFoto) {
+                document.getElementById('foto-info').style.color = 'var(--erro)';
+                document.getElementById('foto-info').innerText = "⚠️ ADICIONE UMA FOTO";
+                erro = true;
+            }
             if(erro) return;
             card.querySelectorAll('input, select').forEach(i => { if(i.id) db[i.id] = i.value; });
             
@@ -254,29 +305,31 @@
         function voltarPara(id) {
             document.querySelectorAll('.card').forEach(c => c.classList.remove('active-card'));
             document.getElementById('sucesso-final').style.display = 'none';
-            if(id === 'REVISAO') {
-                document.getElementById('card-ident').classList.add('active-card');
-            } else {
-                document.getElementById(id).classList.add('active-card');
-            }
+            if(id === 'REVISAO') { document.getElementById('card-ident').classList.add('active-card'); } 
+            else { document.getElementById(id).classList.add('active-card'); }
             if(window.innerWidth < 768) toggleMenu();
         }
 
         async function enviarTudo() {
             const loading = document.getElementById('loading-overlay');
             loading.style.display = 'flex';
-            let resumoTransporte = Object.entries(db.transportes).filter(([_, ativo]) => ativo).map(([nome, _]) => nome.toUpperCase()).join(", ") || "NENHUM";
-            const textoFinal = `[PROTOCOLO ARP - CODEX]\nNOME: ${db.nome}\nCODINOME: ${db.cod}\nNASCIMENTO: ${db.nasc}\nIDADE: ${db.idade}\nNATURALIDADE: ${db.nat}\nNACIONALIDADE: ${db.nac}\nPROFISSÃO: ${db.prof}\nRELIGIÃO: ${db.rel}\nNAMORANDO: ${db.namoro}\nPARCEIRO: ${db.nome_parceiro || 'N/A'}\nALTURA: ${db.alt}\nPESO: ${db.peso}\nPELE: ${db.pele}\nTIPO_FISICO: ${db.tipo_fisico}\nOLHOS: ${db.olhos}\nCABELO: ${db.cabelo}\nSINAIS: ${db.sinais}\nBAIRRO: ${db.bairro}\nESCOLARIDADE: ${db.escola}\nPASSAPORTE: ${db.pass}\nCNH: ${db.cnh}\nCAT_CNH: ${db.cnh_cat || 'N/A'}\nSIT_CNH: ${db.cnh_sit || 'N/A'}\nTRANSPORTES: ${resumoTransporte}\nCARTAO_DETALHES: ${db.info_cartao || 'N/A'}\nVEICULO_DETALHES: ${db.det_veic || 'N/A'}\n\nJSON_DATA: ${JSON.stringify(db)}`;
+            let resumoTransporte = Object.entries(db.transportes).filter(([_, ativo]) => ativo).map(([nome, _]) => nome).join(", ") || "NENHUM";
+            
+            const textoFinal = `[PROTOCOLO ARP - CODEX]\nFOTO: ${db.urlFoto}\nNOME: ${db.nome}\nCODINOME: ${db.cod}\nNASCIMENTO: ${db.nasc}\nIDADE: ${db.idade}\nNATURALIDADE: ${db.nat}\nNACIONALIDADE: ${db.nac}\nPROFISSÃO: ${db.prof}\nRELIGIÃO: ${db.rel}\nESTADO CIVIL: ${db.estado_civil}\nPARCEIRO: ${db.nome_parceiro || 'N/A'}\nALTURA: ${db.alt}\nPESO: ${db.peso}\nPELE: ${db.pele}\nTIPO FÍSICO: ${db.tipo_fisico}\nOLHOS: ${db.olhos}\nCABELO: ${db.cabelo}\nSINAIS: ${db.sinais}\nBAIRRO: ${db.bairro}\nESCOLARIDADE: ${db.escola}\nPASSAPORTE: ${db.passaporte}\nCNH: ${db.cnh}\nCAT CNH: ${db.cnh_cat || 'N/A'}\nSIT CNH: ${db.cnh_sit || 'N/A'}\nTRANSPORTES: ${resumoTransporte}\nCARTÃO DETALHES: ${db.info_cartao || 'N/A'}\nVEÍCULO DETALHES: ${db.det_veic || 'N/A'}`;
+            
             try {
                 await fetch(`${SERVIDOR}/registrar`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nome: db.nome, agente: db.cod, conteudo: textoFinal })
+                    body: JSON.stringify({ 
+                        nome: db.nome, 
+                        agente: db.cod, 
+                        conteudo: textoFinal,
+                        foto: db.urlFoto
+                    })
                 });
                 loading.style.display = 'none';
-            } catch(e) {
-                loading.style.display = 'none';
-            }
+            } catch(e) { loading.style.display = 'none'; }
         }
     </script>
 </body>

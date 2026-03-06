@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Codex D'ARC | ARP-PROTOCOL v4.0</title>
+    <title>Codex D'ARC | ARP-PROTOCOL v4.5</title>
     <style>
         :root {
             --marinho: #ffffff;
@@ -44,7 +44,8 @@
 
         .input-group { margin-bottom: 15px; }
         label { display: block; font-size: 10px; font-weight: bold; color: #718096; margin-bottom: 5px; text-transform: uppercase; }
-        input[type="text"], select { width: 100%; padding: 10px; border: 1px solid var(--cinza); border-radius: 6px; outline: none; font-size: 13px; color: var(--text-dark); }
+        input[type="text"], select, textarea { width: 100%; padding: 10px; border: 1px solid var(--cinza); border-radius: 6px; outline: none; font-size: 13px; color: var(--text-dark); }
+        textarea { resize: vertical; min-height: 80px; font-family: inherit; }
         input.campo-erro { border-color: var(--erro) !important; }
 
         .row { display: flex; gap: 10px; margin-bottom: 10px; }
@@ -55,7 +56,6 @@
         .check-row { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
         .btn-check { flex: 1; min-width: 70px; background: #fff; border: 1px solid var(--cinza); padding: 8px; border-radius: 6px; cursor: pointer; text-align: center; font-size: 9px; font-weight: bold; color: var(--text-dark); }
         .btn-check.active-sim { border-color: var(--sucesso); color: var(--sucesso); background: #f0fff4; }
-        .btn-check.active-nao { border-color: var(--erro); color: var(--erro); background: #fff5f5; }
 
         .btn-registrar { width: 100%; padding: 15px; background: var(--azul-claro); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 10px; box-shadow: 0 4px 10px rgba(0, 212, 255, 0.2); }
         
@@ -73,7 +73,7 @@
 
     <div id="loading-overlay">
         <div style="font-size: 40px;">📡</div>
-        <h3 id="status-texto">SINCRONIZANDO ARP...</h3>
+        <h3 id="status-texto">SINCRONIZANDO ARP INTEGRAL...</h3>
     </div>
 
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
@@ -86,7 +86,7 @@
     <div class="main-content">
         <header>
             <div style="font-size: 22px; cursor: pointer;" onclick="toggleMenu()">☰</div>
-            <div style="font-weight: bold; color: var(--azul-claro);">D'ARC CODEX | ARP</div>
+            <div style="font-weight: bold; color: var(--azul-claro);">D'ARC CODEX | ARP BRUTO</div>
             <div style="font-size: 9px; opacity: 0.7; font-weight: 800;">RESTRITO</div>
         </header>
 
@@ -94,7 +94,7 @@
             <div class="container">
                 <div id="sucesso-final">
                     <h1 style="color: var(--sucesso); font-size: 2rem;">PROTOCOLADO</h1>
-                    <p style="margin: 20px 0; font-weight: bold;">DADOS ENVIADOS COM SUCESSO.</p>
+                    <p style="margin: 20px 0; font-weight: bold;">DADOS ENVIADOS COM TRADUÇÃO COMPLETA.</p>
                     <button class="btn-registrar" style="background: var(--text-dark);" onclick="location.reload()">NOVO FORMULÁRIO</button>
                 </div>
 
@@ -111,7 +111,20 @@
                     <div class="input-group"><label>Codinome (Para Reconhecimento)</label><input type="text" id="cod" class="req"></div>
                     <div class="row">
                         <div class="input-group"><label>Data Nascimento</label><input type="text" id="nasc" placeholder="dd/mm/aaaa" class="req"></div>
-                        <div class="input-group"><label>Idade</label><input type="text" id="idade" class="req"></div>
+                        <div class="input-group">
+                            <label>Tipo Sanguíneo</label>
+                            <select id="sangue">
+                                <option value="Não Informado">Selecione...</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="input-group"><label>Naturalidade</label><input type="text" id="nat" class="req"></div>
@@ -162,7 +175,7 @@
                         <div class="input-group"><label>Cor dos Olhos</label><input type="text" id="olhos" class="req"></div>
                         <div class="input-group"><label>Cor do Cabelo</label><input type="text" id="cabelo" class="req"></div>
                     </div>
-                    <div class="input-group"><label>Sinais Distintivos / Marcas</label>
+                    <div class="input-group"><label>Sinais Distintivos / Marcas / Tatuagens</label>
                         <input type="text" id="sinais" class="req">
                     </div>
                     <button class="btn-registrar" onclick="proximo('card-fisico', 'card-outros', 'DADOS FÍSICOS')">Próxima Etapa</button>
@@ -184,7 +197,7 @@
                             </select>
                         </div>
                         <div class="input-group">
-                            <label>Possui CNH?</label>
+                            <label>Possui Habilitação de Motorista?</label>
                             <select id="cnh" onchange="checkCNH(this.value)">
                                 <option value="Não">Não</option>
                                 <option value="Sim">Sim</option>
@@ -193,8 +206,8 @@
                     </div>
 
                     <div id="sub-cnh" class="sub-secao">
-                        <label>Categorias</label><input type="text" id="cnh_cat">
-                        <label>Situação</label><input type="text" id="cnh_sit">
+                        <label>CATEGORIA DA HABILITAÇÃO</label><input type="text" id="cnh_cat">
+                        <label>SITUAÇÃO DA HABILITAÇÃO</label><input type="text" id="cnh_sit">
                     </div>
 
                     <div class="check-container"><label>🚦 Meios de Transporte:</label>
@@ -210,7 +223,13 @@
                         <label>Detalhes do Cartão</label><input type="text" id="info_cartao">
                     </div>
                     <div class="input-group"><label>Modelo/Cor do Veículo</label><input type="text" id="det_veic"></div>
-                    <button class="btn-registrar" onclick="proximo('card-outros', 'FINAL', 'MOBILIDADE')">CONCLUIR E SALVAR</button>
+                    
+                    <div class="input-group">
+                        <label>📝 Informações Adicionais / Observações</label>
+                        <textarea id="obs_extra" placeholder="Acrescente qualquer informação relevante aqui..."></textarea>
+                    </div>
+
+                    <button class="btn-registrar" onclick="proximo('card-outros', 'FINAL', 'MOBILIDADE')">CONCLUIR E SALVAR NO PAINEL</button>
                 </div>
             </div>
         </main>
@@ -271,13 +290,9 @@
                 if(!i.value.trim()) { i.classList.add('campo-erro'); erro = true; }
                 else { i.classList.remove('campo-erro'); }
             });
-            if(atual === 'card-ident' && !db.urlFoto) {
-                document.getElementById('foto-info').style.color = 'var(--erro)';
-                document.getElementById('foto-info').innerText = "⚠️ ADICIONE UMA FOTO";
-                erro = true;
-            }
+            
             if(erro) return;
-            card.querySelectorAll('input, select').forEach(i => { if(i.id) db[i.id] = i.value; });
+            card.querySelectorAll('input, select, textarea').forEach(i => { if(i.id) db[i.id] = i.value; });
             
             if(prox === 'FINAL') {
                 card.classList.remove('active-card');
@@ -315,7 +330,36 @@
             loading.style.display = 'flex';
             let resumoTransporte = Object.entries(db.transportes).filter(([_, ativo]) => ativo).map(([nome, _]) => nome).join(", ") || "NENHUM";
             
-            const textoFinal = `[PROTOCOLO ARP - CODEX]\nFOTO: ${db.urlFoto}\nNOME: ${db.nome}\nCODINOME: ${db.cod}\nNASCIMENTO: ${db.nasc}\nIDADE: ${db.idade}\nNATURALIDADE: ${db.nat}\nNACIONALIDADE: ${db.nac}\nPROFISSÃO: ${db.prof}\nRELIGIÃO: ${db.rel}\nESTADO CIVIL: ${db.estado_civil}\nPARCEIRO: ${db.nome_parceiro || 'N/A'}\nALTURA: ${db.alt}\nPESO: ${db.peso}\nPELE: ${db.pele}\nTIPO FÍSICO: ${db.tipo_fisico}\nOLHOS: ${db.olhos}\nCABELO: ${db.cabelo}\nSINAIS: ${db.sinais}\nBAIRRO: ${db.bairro}\nESCOLARIDADE: ${db.escola}\nPASSAPORTE: ${db.passaporte}\nCNH: ${db.cnh}\nCAT CNH: ${db.cnh_cat || 'N/A'}\nSIT CNH: ${db.cnh_sit || 'N/A'}\nTRANSPORTES: ${resumoTransporte}\nCARTÃO DETALHES: ${db.info_cartao || 'N/A'}\nVEÍCULO DETALHES: ${db.det_veic || 'N/A'}`;
+            // TRADUÇÃO BRUTA - SEM SIGLAS SIT/CAT/CNH
+            const textoFinal = `[PROTOCOLO INTEGRAL CODEX D'ARC]
+FOTO: ${db.urlFoto || 'NÃO ENVIADA'}
+NOME COMPLETO: ${db.nome}
+CODINOME: ${db.cod}
+DATA DE NASCIMENTO: ${db.nasc}
+TIPO SANGUÍNEO: ${db.sangue}
+NATURALIDADE: ${db.nat}
+NACIONALIDADE: ${db.nac}
+PROFISSÃO: ${db.prof}
+RELIGIÃO: ${db.rel}
+ESTADO CIVIL: ${db.estado_civil}
+PARCEIRO: ${db.nome_parceiro || 'N/A'}
+ALTURA: ${db.alt}
+PESO: ${db.peso}
+PELE: ${db.pele}
+TIPO FÍSICO: ${db.tipo_fisico}
+OLHOS: ${db.olhos}
+CABELO: ${db.cabelo}
+SINAIS E MARCAS: ${db.sinais}
+BAIRRO: ${db.bairro}
+ESCOLARIDADE: ${db.escola}
+PASSAPORTE: ${db.passaporte}
+POSSUI HABILITAÇÃO: ${db.cnh}
+CATEGORIA DA HABILITAÇÃO: ${db.cnh_cat || 'N/A'}
+SITUAÇÃO DA HABILITAÇÃO: ${db.cnh_sit || 'N/A'}
+MEIOS DE TRANSPORTE: ${resumoTransporte}
+DETALHES DO CARTÃO: ${db.info_cartao || 'N/A'}
+DETALHES DO VEÍCULO: ${db.det_veic || 'N/A'}
+INFORMAÇÕES ADICIONAIS: ${db.obs_extra || 'NENHUMA'}`;
             
             try {
                 await fetch(`${SERVIDOR}/registrar`, {
@@ -325,7 +369,7 @@
                         nome: db.nome, 
                         agente: db.cod, 
                         conteudo: textoFinal,
-                        foto: db.urlFoto // Enviando a foto separada para o painel
+                        foto: db.urlFoto 
                     })
                 });
                 loading.style.display = 'none';

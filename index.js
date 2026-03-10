@@ -1,47 +1,46 @@
 const express = require('express');
+const { createClient } = require('@supabase/supabase-js');
 const cors = require('cors');
-const path = require('path');
 const app = express();
 
-// Configurações Básicas
 app.use(cors());
 app.use(express.json());
 
-// 1. COMANDO MÁGICO: Isso faz o Render servir seus arquivos .html automaticamente
-app.use(express.static(__dirname));
+// CONFIGURAÇÃO DO SEU PROJETO CODEX-DATA (Extraído dos seus prints)
+const SUPABASE_URL = 'https://ljkpkrkfuuugiyoilfmr.supabase.co'; 
+const SUPABASE_KEY = 'sb_publishable_BkKrTmWOjam2NKZEuu21LQ_CmAhzPoh'; 
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Banco de dados temporário na memória
-let bancoDados = [];
-
-// 2. Rota para receber os dados do formulário
-app.post('/registrar', (req, res) => {
-    console.log("Recebendo nova ficha...");
-    const novaFicha = {
-        id: Date.now(),
-        agente: req.body.nome,
-        dados: req.body.conteudo,
-        hora: new Date().toLocaleString('pt-BR')
-    };
-    bancoDados.push(novaFicha);
-    res.status(200).json({ status: "Sucesso no registro" });
+// ROTA PARA BUSCAR OS DADOS GUARDADOS
+app.get('/dados', async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('registros')
+            .select('*');
+        
+        if (error) throw error;
+        res.json(data || []);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
-// 3. Rota para o painel buscar os dados
-app.get('/dados', (req, res) => {
-    res.json(bancoDados);
-});
+// ROTA PARA SALVAR OU ATUALIZAR NOTAS PARA SEMPRE
+app.post('/atualizar/:nome', async (req, res) => {
+    try {
+        const { nome } = req.params;
+        const { notas } = req.body;
+        
+        const { data, error } = await supabase
+            .from('registros')
+            .upsert({ nome: nome, notas: notas }, { onConflict: 'nome' });
 
-// 4. Rota principal: Quando você abrir o link puro, ele abre o index.html
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// 5. Rota para o Painel: Se digitar /admin, abre o painel.html
-app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'painel.html'));
+        if (error) throw error;
+        res.json({ status: "Sincronizado na Nuvem", data });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`📡 Servidor Codex Online na porta ${PORT}`);
-});
+app.listen(PORT, () => console.log("D'ARC CODEX: Sistema Online e Conectado"));

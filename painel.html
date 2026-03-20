@@ -157,7 +157,7 @@
 </head>
 <body>
 
-    <header class="top-nav">D'ARC CODEX <span style="font-weight: 400; color: #a0aec0; margin-left: 5px;">| Enterprise Data Manager</span></header>
+    <header class="top-nav">D'ARC CODEX <span id="statusNuvem" style="font-weight: 400; color: #a0aec0; margin-left: 5px;">| Enterprise Data Manager</span></header>
 
     <div class="container">
         <div id="overlay" onclick="toggleSidebar()"></div>
@@ -205,7 +205,7 @@
                         <div class="section-header-styled">Informações Confidenciais</div>
                         <div class="data-box-container" style="padding: 15px;">
                             <textarea id="relatorioTexto" class="relatorio-textarea" placeholder="Escreva aqui os dados extras deste perfil..." oninput="salvarRelatorio()"></textarea>
-                            <div id="saveIndicator" class="save-indicator"><i class="fas fa-check"></i> DADOS SALVOS NO PERFIL</div>
+                            <div id="saveIndicator" class="save-indicator"><i class="fas fa-cloud-upload-alt"></i> SINCRONIZADO NA NUVEM</div>
                         </div>
                     </div>
                 </div>
@@ -223,6 +223,7 @@
         const overlay = document.getElementById('overlay');
         const handleIcon = document.getElementById('handleIcon');
         let nomeAtualAtivo = ""; 
+        let timeoutSave;
 
         function toggleSidebar() {
             const isOpen = sidebar.classList.toggle('open');
@@ -240,19 +241,31 @@
             document.getElementById('scrollArea').scrollTop = 0;
         }
 
+        // MUDANÇA AQUI: SALVAMENTO EM NUVEM VIA API RENDER
         function salvarRelatorio() {
             if (!nomeAtualAtivo) return;
             const texto = document.getElementById('relatorioTexto').value;
-            localStorage.setItem('DARC_NOTE_' + nomeAtualAtivo, texto);
-            
             const indicator = document.getElementById('saveIndicator');
-            indicator.style.display = 'block';
-            setTimeout(() => { indicator.style.display = 'none'; }, 1000);
+
+            clearTimeout(timeoutSave);
+            timeoutSave = setTimeout(async () => {
+                try {
+                    const response = await fetch(`${API}/atualizar/${nomeAtualAtivo}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ notas: texto })
+                    });
+                    if (response.ok) {
+                        indicator.style.display = 'block';
+                        setTimeout(() => { indicator.style.display = 'none'; }, 2000);
+                    }
+                } catch (e) { console.error("Erro ao salvar na nuvem"); }
+            }, 800);
         }
 
-        function carregarRelatorio(nome) {
-            const salvo = localStorage.getItem('DARC_NOTE_' + nome);
-            document.getElementById('relatorioTexto').value = salvo || "";
+        function carregarRelatorio(user) {
+            // Agora carrega direto do objeto 'user' vindo da API
+            document.getElementById('relatorioTexto').value = user.notas || "";
         }
 
         function filterAgents() {
@@ -293,7 +306,6 @@
                     }
                 });
             } else {
-                // ALTERADO: De VALOR para NOME conforme solicitado
                 innerHtml = `<div class="data-row"><span>NOME</span><span>${value}</span></div>`;
             }
             return `<div class="section-header-styled">${fullExpand(key)}</div><div class="data-box-container">${innerHtml}</div>`;
@@ -323,7 +335,11 @@
                     div.innerHTML = `<i class="fas fa-id-card"></i><span>${label}</span>`;
                     list.appendChild(div);
                 });
-            } catch (e) { console.error("OFFLINE"); }
+                document.getElementById('statusNuvem').innerHTML = '| <span style="color:var(--sucesso)">CLOUD CONNECTED</span>';
+            } catch (e) { 
+                console.error("OFFLINE"); 
+                document.getElementById('statusNuvem').innerHTML = '| <span style="color:var(--erro)">OFFLINE</span>';
+            }
         }
 
         function openFullPhoto(src) {
@@ -354,12 +370,12 @@
             document.getElementById('tab-identificacao').innerHTML = htmlAba1;
             document.getElementById('tab-tecnico').innerHTML = htmlAba2;
             
-            carregarRelatorio(nomeFinal);
+            // MUDANÇA AQUI: Carrega o texto que veio da API
+            carregarRelatorio(user);
             switchTab('identificacao', document.querySelector('.tab-btn'));
         }
 
         function closeReport() { 
-            salvarRelatorio(); 
             document.getElementById('reportCard').style.display = 'none'; 
             document.getElementById('placeholder').style.display = 'block'; 
         }
